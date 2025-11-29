@@ -58,7 +58,7 @@ const InspectionReport = ({ route, navigation }: any) => {
     setLoading(true);
     try {
       const res = await fetch(
-        `https://caryanamindia.prodchunca.in.net/inspectionReport/getByBeadingCar?beadingCarId=${beadingCarId}`,
+        `http://10.0.2.2:8086/inspectionReport/getByBeadingCar?beadingCarId=${beadingCarId}`,
       );
       const text = await res.text();
       const data = JSON.parse(text);

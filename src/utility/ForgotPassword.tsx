@@ -46,7 +46,7 @@ const ForgotPassword = () => {
 
     try {
       const response = await fetch(
-        'https://caryanamindia.prodchunca.in.net/cars/forgot-password',
+        'http://10.0.2.2:8086/cars/forgot-password',
         {
           method: 'POST',
           headers: {

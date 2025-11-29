@@ -120,7 +120,7 @@ const MyCarsScreen = ({navigation}: any) => {
     const beadingCarId = car.beadingCarId || car.bidCarId || car.id;
     try {
       const response = await fetch(
-        `https://caryanamindia.prodchunca.in.net/uploadFileBidCar/getByBidCarID?beadingCarId=${beadingCarId}`,
+        `http://10.0.2.2:8086/uploadFileBidCar/getByBidCarID?beadingCarId=${beadingCarId}`,
       );
       const text = await response.text();
       let imgArray: any[] = [];
@@ -163,7 +163,7 @@ const MyCarsScreen = ({navigation}: any) => {
     setLoading(true);
     try {
       const res = await fetch(
-        `https://caryanamindia.prodchunca.in.net/BeadingCarController/getByDealerID/${dealerId}`,
+        `http://10.0.2.2:8086/BeadingCarController/getByDealerID/${dealerId}`,
       );
       const text = await res.text();
       let data;

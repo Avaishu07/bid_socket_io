@@ -68,7 +68,7 @@ const AccountScreen = ({ navigation }: any) => {
       }
  
       const dealerRes = await fetch(
-        `https://caryanamindia.prodchunca.in.net/dealer/${dealerId}`,
+        `http://10.0.2.2:8086/dealer/${dealerId}`,
         {
           headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
         },
@@ -78,7 +78,7 @@ const AccountScreen = ({ navigation }: any) => {
       if (dealerRes.ok && dealerJson?.dealerDto) setDealerData(dealerJson.dealerDto);
  
       const photoRes = await fetch(
-        `https://caryanamindia.prodchunca.in.net/ProfilePhoto/getbyuserid?userId=${userId}`,
+        `http://10.0.2.2:8086/ProfilePhoto/getbyuserid?userId=${userId}`,
         { headers: { Authorization: `Bearer ${token}` } },
       );
  
@@ -126,7 +126,7 @@ const AccountScreen = ({ navigation }: any) => {
  
       setLoading(true);
       const res = await fetch(
-        'https://caryanamindia.prodchunca.in.net/ProfilePhoto/add',
+        'http://10.0.2.2:8086/ProfilePhoto/add',
         {
           method: 'POST',
           headers: {
@@ -162,7 +162,7 @@ const AccountScreen = ({ navigation }: any) => {
  
       setLoading(true);
       const res = await fetch(
-        `https://caryanamindia.prodchunca.in.net/ProfilePhoto/deletebyuserid?userId=${userId}`,
+        `http://10.0.2.2:8086/ProfilePhoto/deletebyuserid?userId=${userId}`,
         {
           method: 'DELETE',
           headers: { Authorization: `Bearer ${token}` },

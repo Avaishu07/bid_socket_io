@@ -29,7 +29,7 @@ const InteriorSection: React.FC<InteriorSectionProps> = ({ beadingCarId }) => {
     try {
       const docType = 'Interior';
       const response = await fetch(
-        `https://caryanamindia.prodchunca.in.net/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`
+        `http://10.0.2.2:8086/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`
       );
       const text = await response.text();
       const data = JSON.parse(text);

@@ -600,7 +600,10 @@ interface BidUserData {
  
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
  
-const SOCKET_IO_URL = 'http://10.0.2.2:3000';
+const SOCKET_IO_URL = __DEV__
+  ? 'http://10.0.2.2:3000'
+  : 'https://car01.dostenterprises.com';
+  
 const ENABLE_SOCKET_DEBUG_LOGS = true;
  
 const debugLog = (...args: any[]) => {
