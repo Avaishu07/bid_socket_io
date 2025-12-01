@@ -568,7 +568,7 @@ import React, {
 } from 'react';
 import { Socket } from 'socket.io-client';
 import { getSocket } from './socketio';
- 
+
 interface WebSocketContextType {
   isConnected: boolean;
   placeBid: (userData: BidUserData) => Promise<any>;
@@ -587,32 +587,36 @@ interface WebSocketContextType {
   connectionError: string | null;
   connectionStatus: string;
 }
- 
+
 interface WebSocketProviderProps {
   children: ReactNode;
 }
- 
+
 interface BidUserData {
   userId: string;
   bidCarId: string;
   amount: number;
 }
- 
+
 const WebSocketContext = createContext<WebSocketContextType | null>(null);
- 
-const SOCKET_IO_URL = 'http://10.0.2.2:3000';
+
+import SOCKET_SERVER_URL from './serverConfig';
+
+// Primary socket endpoint used by the provider. Change `src/utility/serverConfig.ts` to update this.
+const SOCKET_IO_URL = SOCKET_SERVER_URL;
+
 const ENABLE_SOCKET_DEBUG_LOGS = true;
- 
+
 const debugLog = (...args: any[]) => {
   if (ENABLE_SOCKET_DEBUG_LOGS) {
     console.log('[Socket.IO]', new Date().toISOString(), ...args);
   }
 };
- 
+
 const debugError = (...args: any[]) => {
   console.error('[Socket.IO ERROR]', new Date().toISOString(), ...args);
 };
- 
+
 export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   children,
 }) => {
@@ -621,11 +625,11 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   const [connectionError, setConnectionError] = useState<string | null>(null);
   const [connectionStatus, setConnectionStatus] = useState<string>('disconnected');
   const [socket, setSocket] = useState<Socket | null>(null);
- 
+
   const [topThreeBidsAmount, setTopThreeBidsAmount] = useState<any[]>([]);
   const [topThreeBidsAmountArray, setTopThreeBidsAmountArray] = useState<any[]>([]);
   const [liveCars, setLiveCars] = useState<any[]>([]);
- 
+
   const socketRef = useRef<Socket | null>(null);
   const listenersAttachedRef = useRef(false);
   const attachedSocketIdsRef = useRef<Set<string>>(new Set());
@@ -651,15 +655,15 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       };
     });
   };
- 
+
   const attachSocketListeners = (s: Socket) => {
     if (listenersAttachedRef.current) {
       debugLog('⚠️ Listeners already attached - skipping');
       return;
     }
- 
+
     debugLog('🔗 Attaching Socket.IO listeners ONCE');
- 
+
     s.on('connect', () => {
       debugLog('✅ Socket.IO CONNECTED', s.id);
       setIsConnected(true);
@@ -680,7 +684,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
       debugLog('✅ Socket connected and ready for events');
     });
- 
+
     s.on('disconnect', (reason) => {
       debugLog('⚠️ Socket.IO DISCONNECTED:', reason);
       setIsConnected(false);
@@ -691,12 +695,12 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         attachedSocketIdsRef.current.delete(s.id);
       }
     });
- 
+
     s.on('liveCars', (carsData: any[]) => {
       // Deduplicate: ignore if we received the same length of cars within 500ms
       const now = Date.now();
       const currentLength = Array.isArray(carsData) ? carsData.length : 0;
-      
+
       if (
         lastReceivedLiveCarsLengthRef.current === currentLength &&
         now - lastReceivedLiveCarsRef.current < 500
@@ -704,16 +708,16 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         debugLog(`⏭️ Skipping duplicate liveCars event (${currentLength} cars)`);
         return;
       }
-      
+
       lastReceivedLiveCarsRef.current = now;
       lastReceivedLiveCarsLengthRef.current = currentLength;
-      
+
       debugLog(`📨 liveCars: ${currentLength} cars`);
       if (Array.isArray(carsData)) {
         setLiveCars(transformCars(carsData));
       }
     });
- 
+
     s.on('liveCarUpdate', (carData: any) => {
       debugLog('🚗 liveCarUpdate:', carData.bidCarId);
       setLiveCars((prev) =>
@@ -722,19 +726,19 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         )
       );
     });
- 
+
     s.on('newLiveCar', (carData: any) => {
       debugLog('🚗 newLiveCar');
       const newCar = transformCars([carData])[0];
       setLiveCars((prev) => [...prev, newCar]);
     });
- 
+
     s.on('topThreeBids', (bidsData: any[]) => {
       debugLog('🏆 topThreeBids:', bidsData.length);
       setTopThreeBidsAmount(bidsData);
       setTopThreeBidsAmountArray(bidsData);
     });
- 
+
     s.on('liveBidValue', (bidData: any) => {
       debugLog('💰 liveBidValue:', bidData.bidCarId, bidData.amount);
       setTopThreeBidsAmount((prev) =>
@@ -755,16 +759,16 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         )
       );
     });
- 
+
     s.on('error', (err: any) => {
       debugError('❌ Socket error:', err);
       setConnectionError(err?.message || 'Socket error');
     });
- 
+
     listenersAttachedRef.current = true;
     debugLog('✅ ALL Socket.IO listeners attached');
   };
- 
+
   // ✅ FIXED: getSocket() takes 1 argument only
   const createSocketConnection = () => {
     if (socketRef.current?.connected) {
@@ -776,7 +780,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       // FIXED: Only pass URL - no options object
       const newSocket = getSocket(SOCKET_IO_URL);
       const socketId = newSocket.id || 'unknown';
-      
+
       // Only attach listeners once per socket instance
       if (!attachedSocketIdsRef.current.has(socketId)) {
         attachedSocketIdsRef.current.add(socketId);
@@ -785,7 +789,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
         attachSocketListeners(newSocket);
         debugLog(`🔐 Listeners attached for socket: ${socketId}`);
       }
-      
+
       newSocket.connect();
       return newSocket;
     } catch (error) {
@@ -796,11 +800,11 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     debugLog('🔗 connectWebSocket called');
     createSocketConnection();
   };
- 
+
   useEffect(() => {
     debugLog('🎯 Mounting - Creating Socket.IO connection');
     connectWebSocket();
- 
+
     return () => {
       debugLog('🧹 Unmounting - Cleaning up');
       if (socketRef.current) {
@@ -812,7 +816,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       listenersAttachedRef.current = false;
     };
   }, []);
- 
+
   const getLiveCars = () => {
     debugLog('🔍 Manual getLiveCars called');
     const now = Date.now();
@@ -825,17 +829,17 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       debugLog('⏱️ getLiveCars call throttled (too soon)');
     }
   };
- 
+
   const getTopThreeBids = (bidCarId: string) => {
     debugLog(`🏆 getTopThreeBids: ${bidCarId}`);
     socketRef.current?.emit('getTopThreeBids', { bidCarId });
   };
- 
+
   const getLiveBidValue = (bidCarId: string) => {
     debugLog(`💰 getLiveBidValue: ${bidCarId}`);
     socketRef.current?.emit('getLiveBidValue', { bidCarId });
   };
- 
+
   const refreshTopThreeBids = (bidCarId: string): Promise<any> => {
     return new Promise((resolve, reject) => {
       if (!socketRef.current?.connected) {
@@ -850,7 +854,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       socketRef.current!.emit('refreshTopThreeBids', { bidCarId });
     });
   };
- 
+
   const placeBid = (userData: BidUserData): Promise<any> => {
     return new Promise((resolve, reject) => {
       if (!socketRef.current?.connected) {
@@ -871,14 +875,14 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       });
     });
   };
- 
+
   const disconnectWebSocket = () => {
     debugLog('🔌 Manual disconnect');
     if (socketRef.current) {
       socketRef.current.disconnect();
     }
   };
- 
+
   const contextValue: WebSocketContextType = {
     isConnected,
     placeBid,
@@ -897,7 +901,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
     connectionError,
     connectionStatus,
   };
- 
+
   useEffect(() => {
     (globalThis as any).SocketIODebug = {
       socketState: () => ({
@@ -909,14 +913,14 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
       forceBidValue: getLiveBidValue,
     };
   }, [liveCars.length, topThreeBidsAmount.length]);
- 
+
   return (
     <WebSocketContext.Provider value={contextValue}>
       {children}
     </WebSocketContext.Provider>
   );
 };
- 
+
 export const useWebSocket = (): WebSocketContextType => {
   const context = useContext(WebSocketContext);
   if (!context) {
@@ -924,9 +928,7 @@ export const useWebSocket = (): WebSocketContextType => {
   }
   return context;
 };
- 
+
 export default function WebSocketConnectionComponent() {
   return null;
 }
- 
- 

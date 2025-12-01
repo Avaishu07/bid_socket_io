@@ -1,6 +1,6 @@
 // ForgotPassword.tsx - FINAL (Blue Theme Matching Login + Centered Logo + Full Curved Card)
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -13,11 +13,11 @@ import {
   StatusBar,
   Image,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { StackNavigationProp } from '@react-navigation/stack';
+import {useNavigation} from '@react-navigation/native';
+import {StackNavigationProp} from '@react-navigation/stack';
 import LinearGradient from 'react-native-linear-gradient';
 
-const { width, height } = Dimensions.get('window');
+const {width, height} = Dimensions.get('window');
 
 // Navigation types
 type RootStackParamList = {
@@ -46,15 +46,15 @@ const ForgotPassword = () => {
 
     try {
       const response = await fetch(
-        'https://caryanamindia.prodchunca.in.net/cars/forgot-password',
+        'https://car01.dostenterprises.com/cars/forgot-password',
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             Accept: 'application/json',
           },
-          body: JSON.stringify({ email: trimmedEmail }),
-        }
+          body: JSON.stringify({email: trimmedEmail}),
+        },
       );
 
       const data = await response.json();
@@ -63,7 +63,7 @@ const ForgotPassword = () => {
         Alert.alert(
           'Success',
           'Password reset link has been sent to your email.',
-          [{ text: 'OK', onPress: () => navigation.navigate('Login') }]
+          [{text: 'OK', onPress: () => navigation.navigate('Login')}],
         );
       } else {
         const message =
@@ -75,7 +75,7 @@ const ForgotPassword = () => {
       console.error('💥 Network Error:', error);
       Alert.alert(
         'Connection Error',
-        'Unable to connect to server. Please check your internet connection.'
+        'Unable to connect to server. Please check your internet connection.',
       );
     } finally {
       setLoading(false);
@@ -136,7 +136,7 @@ const ForgotPassword = () => {
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: {flex: 1},
 
   topCurvedSection: {
     paddingTop: 150,
@@ -159,12 +159,12 @@ const styles = StyleSheet.create({
     paddingHorizontal: 30,
     elevation: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
+    shadowOffset: {width: 0, height: 4},
     shadowOpacity: 0.15,
     shadowRadius: 10,
   },
 
-  content: { flex: 1, justifyContent: 'flex-start' },
+  content: {flex: 1, justifyContent: 'flex-start'},
   title: {
     fontSize: 24,
     fontWeight: '700',
@@ -195,14 +195,19 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     elevation: 3,
     shadowColor: '#1B4F72',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.3,
     shadowRadius: 5,
   },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontWeight: '700', fontSize: 16, letterSpacing: 1 },
-  backButton: { marginTop: 25, alignItems: 'center' },
-  backText: { color: '#051A2F', fontWeight: '500', fontSize: 14 },
+  buttonDisabled: {opacity: 0.6},
+  buttonText: {
+    color: '#fff',
+    fontWeight: '700',
+    fontSize: 16,
+    letterSpacing: 1,
+  },
+  backButton: {marginTop: 25, alignItems: 'center'},
+  backText: {color: '#051A2F', fontWeight: '500', fontSize: 14},
 });
 
 export default ForgotPassword;

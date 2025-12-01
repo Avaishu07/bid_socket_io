@@ -1,22 +1,31 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 
 interface ElectricalSectionProps {
   beadingCarId: string;
 }
 
-const ElectricalSection: React.FC<ElectricalSectionProps> = ({ beadingCarId }) => {
+const ElectricalSection: React.FC<ElectricalSectionProps> = ({
+  beadingCarId,
+}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
-    FourPowerWindows: "",
-    AirBagFeatures: "",
-    MusicSystem: "",
-    Sunroof: "",
-    ABS: "",
-    InteriorParkingSensor: "",
-    Electricalwiring: "",
+    FourPowerWindows: '',
+    AirBagFeatures: '',
+    MusicSystem: '',
+    Sunroof: '',
+    ABS: '',
+    InteriorParkingSensor: '',
+    Electricalwiring: '',
   });
 
   const [images, setImages] = useState({
@@ -35,7 +44,7 @@ const ElectricalSection: React.FC<ElectricalSectionProps> = ({ beadingCarId }) =
     try {
       const docType = 'Eletrical';
       const response = await fetch(
-        `https://caryanamindia.prodchunca.in.net/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`
+        `https://car01.dostenterprises.com/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`,
       );
       const text = await response.text();
       const data = JSON.parse(text);
@@ -45,33 +54,48 @@ const ElectricalSection: React.FC<ElectricalSectionProps> = ({ beadingCarId }) =
       if (data?.object && Array.isArray(data.object)) {
         data.object.forEach((item: any) => {
           switch (item.subtype) {
-            case "FourPowerWindows":
-              setFormData((prev) => ({ ...prev, FourPowerWindows: item.comment }));
-              setImages((prev) => ({ ...prev, FourPowerWindowss: item.documentLink }));
+            case 'FourPowerWindows':
+              setFormData(prev => ({...prev, FourPowerWindows: item.comment}));
+              setImages(prev => ({
+                ...prev,
+                FourPowerWindowss: item.documentLink,
+              }));
               break;
-            case "AirBagFeatures":
-              setFormData((prev) => ({ ...prev, AirBagFeatures: item.comment }));
-              setImages((prev) => ({ ...prev, AirBagFeaturess: item.documentLink }));
+            case 'AirBagFeatures':
+              setFormData(prev => ({...prev, AirBagFeatures: item.comment}));
+              setImages(prev => ({
+                ...prev,
+                AirBagFeaturess: item.documentLink,
+              }));
               break;
-            case "MusicSystem":
-              setFormData((prev) => ({ ...prev, MusicSystem: item.comment }));
-              setImages((prev) => ({ ...prev, MusicSystems: item.documentLink }));
+            case 'MusicSystem':
+              setFormData(prev => ({...prev, MusicSystem: item.comment}));
+              setImages(prev => ({...prev, MusicSystems: item.documentLink}));
               break;
-            case "Sunroof":
-              setFormData((prev) => ({ ...prev, Sunroof: item.comment }));
-              setImages((prev) => ({ ...prev, Sunroofs: item.documentLink }));
+            case 'Sunroof':
+              setFormData(prev => ({...prev, Sunroof: item.comment}));
+              setImages(prev => ({...prev, Sunroofs: item.documentLink}));
               break;
-            case "ABS":
-              setFormData((prev) => ({ ...prev, ABS: item.comment }));
-              setImages((prev) => ({ ...prev, ABSs: item.documentLink }));
+            case 'ABS':
+              setFormData(prev => ({...prev, ABS: item.comment}));
+              setImages(prev => ({...prev, ABSs: item.documentLink}));
               break;
-            case "InteriorParkingSensor":
-              setFormData((prev) => ({ ...prev, InteriorParkingSensor: item.comment }));
-              setImages((prev) => ({ ...prev, InteriorParkingSensors: item.documentLink }));
+            case 'InteriorParkingSensor':
+              setFormData(prev => ({
+                ...prev,
+                InteriorParkingSensor: item.comment,
+              }));
+              setImages(prev => ({
+                ...prev,
+                InteriorParkingSensors: item.documentLink,
+              }));
               break;
-            case "Electricalwiring":
-              setFormData((prev) => ({ ...prev, Electricalwiring: item.comment }));
-              setImages((prev) => ({ ...prev, Electricalwirings: item.documentLink }));
+            case 'Electricalwiring':
+              setFormData(prev => ({...prev, Electricalwiring: item.comment}));
+              setImages(prev => ({
+                ...prev,
+                Electricalwirings: item.documentLink,
+              }));
               break;
             default:
               break;
@@ -92,15 +116,16 @@ const ElectricalSection: React.FC<ElectricalSectionProps> = ({ beadingCarId }) =
     }
   }, [beadingCarId]);
 
-  const renderItem = (label: string, value: string, imageUrl: string | null) => (
+  const renderItem = (
+    label: string,
+    value: string,
+    imageUrl: string | null,
+  ) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>{label}: {value || '-'}</Text>
-      {imageUrl && (
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-        />
-      )}
+      <Text style={styles.itemText}>
+        {label}: {value || '-'}
+      </Text>
+      {imageUrl && <Image source={{uri: imageUrl}} style={styles.image} />}
     </View>
   );
 
@@ -128,13 +153,33 @@ const ElectricalSection: React.FC<ElectricalSectionProps> = ({ beadingCarId }) =
 
         <View style={styles.card}>
           <View style={styles.gridContainer}>
-            {renderItem("Four Power Windows", formData.FourPowerWindows, images.FourPowerWindowss)}
-            {renderItem("AirBag Features", formData.AirBagFeatures, images.AirBagFeaturess)}
-            {renderItem("Music System", formData.MusicSystem, images.MusicSystems)}
-            {renderItem("Sunroof", formData.Sunroof, images.Sunroofs)}
-            {renderItem("ABS", formData.ABS, images.ABSs)}
-            {renderItem("Interior Parking Sensor", formData.InteriorParkingSensor, images.InteriorParkingSensors)}
-            {renderItem("Electrical Wiring", formData.Electricalwiring, images.Electricalwirings)}
+            {renderItem(
+              'Four Power Windows',
+              formData.FourPowerWindows,
+              images.FourPowerWindowss,
+            )}
+            {renderItem(
+              'AirBag Features',
+              formData.AirBagFeatures,
+              images.AirBagFeaturess,
+            )}
+            {renderItem(
+              'Music System',
+              formData.MusicSystem,
+              images.MusicSystems,
+            )}
+            {renderItem('Sunroof', formData.Sunroof, images.Sunroofs)}
+            {renderItem('ABS', formData.ABS, images.ABSs)}
+            {renderItem(
+              'Interior Parking Sensor',
+              formData.InteriorParkingSensor,
+              images.InteriorParkingSensors,
+            )}
+            {renderItem(
+              'Electrical Wiring',
+              formData.Electricalwiring,
+              images.Electricalwirings,
+            )}
           </View>
         </View>
       </View>
@@ -179,12 +224,11 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     padding: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     marginBottom: 550,
-
   },
   gridContainer: {
     gap: 20,

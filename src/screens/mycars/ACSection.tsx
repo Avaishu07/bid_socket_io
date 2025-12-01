@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 
 interface AcSectionProps {
   beadingCarId: string;
 }
 
-const AcSection: React.FC<AcSectionProps> = ({ beadingCarId }) => {
+const AcSection: React.FC<AcSectionProps> = ({beadingCarId}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
-    ACCooling: "",
-    Heater: "",
-    ClimateControlAC: "",
-    AcVent: "",
+    ACCooling: '',
+    Heater: '',
+    ClimateControlAC: '',
+    AcVent: '',
   });
 
   const [uploadedImages, setUploadedImages] = useState({
@@ -29,7 +36,7 @@ const AcSection: React.FC<AcSectionProps> = ({ beadingCarId }) => {
     try {
       const docType = 'AC';
       const response = await fetch(
-        `https://caryanamindia.prodchunca.in.net/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`
+        `https://car01.dostenterprises.com/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`,
       );
       const text = await response.text();
       const data = JSON.parse(text);
@@ -39,21 +46,33 @@ const AcSection: React.FC<AcSectionProps> = ({ beadingCarId }) => {
       if (data?.object && Array.isArray(data.object)) {
         data.object.forEach((item: any) => {
           switch (item.subtype) {
-            case "ACCooling":
-              setFormData((prev) => ({ ...prev, ACCooling: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, ACCoolings: item.documentLink }));
+            case 'ACCooling':
+              setFormData(prev => ({...prev, ACCooling: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                ACCoolings: item.documentLink,
+              }));
               break;
-            case "Heater":
-              setFormData((prev) => ({ ...prev, Heater: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, Heaters: item.documentLink }));
+            case 'Heater':
+              setFormData(prev => ({...prev, Heater: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                Heaters: item.documentLink,
+              }));
               break;
-            case "ClimateControlAC":
-              setFormData((prev) => ({ ...prev, ClimateControlAC: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, ClimateControlACs: item.documentLink }));
+            case 'ClimateControlAC':
+              setFormData(prev => ({...prev, ClimateControlAC: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                ClimateControlACs: item.documentLink,
+              }));
               break;
-            case "AcVent":
-              setFormData((prev) => ({ ...prev, AcVent: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, AcVents: item.documentLink }));
+            case 'AcVent':
+              setFormData(prev => ({...prev, AcVent: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                AcVents: item.documentLink,
+              }));
               break;
             default:
               break;
@@ -74,15 +93,16 @@ const AcSection: React.FC<AcSectionProps> = ({ beadingCarId }) => {
     }
   }, [beadingCarId]);
 
-  const renderItem = (label: string, value: string, imageUrl: string | null) => (
+  const renderItem = (
+    label: string,
+    value: string,
+    imageUrl: string | null,
+  ) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>{label}: {value || '-'}</Text>
-      {imageUrl && (
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-        />
-      )}
+      <Text style={styles.itemText}>
+        {label}: {value || '-'}
+      </Text>
+      {imageUrl && <Image source={{uri: imageUrl}} style={styles.image} />}
     </View>
   );
 
@@ -110,10 +130,18 @@ const AcSection: React.FC<AcSectionProps> = ({ beadingCarId }) => {
 
         <View style={styles.card}>
           <View style={styles.gridContainer}>
-            {renderItem("AC Cooling", formData.ACCooling, uploadedImages.ACCoolings)}
-            {renderItem("Heater", formData.Heater, uploadedImages.Heaters)}
-            {renderItem("Climate Control AC", formData.ClimateControlAC, uploadedImages.ClimateControlACs)}
-            {renderItem("Ac Vent", formData.AcVent, uploadedImages.AcVents)}
+            {renderItem(
+              'AC Cooling',
+              formData.ACCooling,
+              uploadedImages.ACCoolings,
+            )}
+            {renderItem('Heater', formData.Heater, uploadedImages.Heaters)}
+            {renderItem(
+              'Climate Control AC',
+              formData.ClimateControlAC,
+              uploadedImages.ClimateControlACs,
+            )}
+            {renderItem('Ac Vent', formData.AcVent, uploadedImages.AcVents)}
           </View>
         </View>
       </View>
@@ -158,12 +186,11 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     padding: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     marginBottom: 550,
-
   },
   gridContainer: {
     gap: 20,

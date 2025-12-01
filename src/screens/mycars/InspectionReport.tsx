@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -47,8 +47,8 @@ const formatDate = (val: string) => {
   });
 };
 
-const InspectionReport = ({ route, navigation }: any) => {
-  const { beadingCarId } = route.params;
+const InspectionReport = ({route, navigation}: any) => {
+  const {beadingCarId} = route.params;
   const [activeTab, setActiveTab] = useState('Document');
   const [report, setReport] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ const InspectionReport = ({ route, navigation }: any) => {
     setLoading(true);
     try {
       const res = await fetch(
-        `https://caryanamindia.prodchunca.in.net/inspectionReport/getByBeadingCar?beadingCarId=${beadingCarId}`,
+        `https://car01.dostenterprises.com/inspectionReport/getByBeadingCar?beadingCarId=${beadingCarId}`,
       );
       const text = await res.text();
       const data = JSON.parse(text);
@@ -102,7 +102,6 @@ const InspectionReport = ({ route, navigation }: any) => {
           if (idx % 2 !== 0) return null;
           return (
             <View key={idx} style={styles.row}>
-
               {/* LEFT COLUMN */}
               <View style={styles.col}>
                 <Text style={styles.label}>{fieldMap[key]}:</Text>
@@ -144,13 +143,19 @@ const InspectionReport = ({ route, navigation }: any) => {
 
   const renderSection = () => {
     if (activeTab === 'Document') return renderDocumentSection(report);
-    if (activeTab === 'Exterior') return <ExteriorSection beadingCarId={beadingCarId} />;
-    if (activeTab === 'Interior') return <InteriorSection beadingCarId={beadingCarId} />;
-    if (activeTab === 'Engine') return <EngineSection beadingCarId={beadingCarId} />;
+    if (activeTab === 'Exterior')
+      return <ExteriorSection beadingCarId={beadingCarId} />;
+    if (activeTab === 'Interior')
+      return <InteriorSection beadingCarId={beadingCarId} />;
+    if (activeTab === 'Engine')
+      return <EngineSection beadingCarId={beadingCarId} />;
     if (activeTab === 'AC') return <ACSection beadingCarId={beadingCarId} />;
-    if (activeTab === 'Electricals') return <ElectricalSection beadingCarId={beadingCarId} />;
-    if (activeTab === 'Engine Video') return <EngineVideoSection beadingCarId={beadingCarId} />;
-    if (activeTab === 'Steering') return <SteeringSection beadingCarId={beadingCarId} />;
+    if (activeTab === 'Electricals')
+      return <ElectricalSection beadingCarId={beadingCarId} />;
+    if (activeTab === 'Engine Video')
+      return <EngineVideoSection beadingCarId={beadingCarId} />;
+    if (activeTab === 'Steering')
+      return <SteeringSection beadingCarId={beadingCarId} />;
 
     return renderEmptySection();
   };
@@ -214,7 +219,7 @@ export default InspectionReport;
 
 /* ---------- STYLES ---------- */
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: COLORS.background },
+  container: {flex: 1, backgroundColor: COLORS.background},
 
   backButton: {
     position: 'absolute',
@@ -237,9 +242,9 @@ const styles = StyleSheet.create({
     color: COLORS.primary,
   },
 
-  center: { flex: 1, justifyContent: 'center', alignItems: 'center' },
-  loadingText: { marginTop: 10, color: COLORS.textGray },
-  errorText: { fontSize: 14, color: 'red' },
+  center: {flex: 1, justifyContent: 'center', alignItems: 'center'},
+  loadingText: {marginTop: 10, color: COLORS.textGray},
+  errorText: {fontSize: 14, color: 'red'},
 
   tabBar: {
     backgroundColor: '#e9e9f2',
@@ -286,12 +291,12 @@ const styles = StyleSheet.create({
     width: '48%',
   },
 
-  label: { fontSize: 14, fontWeight: '500', color: '#333' },
-  value: { fontSize: 14, fontWeight: '700', color: '#000', marginTop: 2 },
+  label: {fontSize: 14, fontWeight: '500', color: '#333'},
+  value: {fontSize: 14, fontWeight: '700', color: '#000', marginTop: 2},
 
   emptyBox: {
     marginTop: 60,
     alignItems: 'center',
   },
-  emptyText: { fontSize: 14, color: COLORS.textGray, fontStyle: 'italic' },
+  emptyText: {fontSize: 14, color: COLORS.textGray, fontStyle: 'italic'},
 });

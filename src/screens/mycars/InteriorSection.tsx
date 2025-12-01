@@ -1,19 +1,26 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 
 interface InteriorSectionProps {
   beadingCarId: string;
 }
 
-const InteriorSection: React.FC<InteriorSectionProps> = ({ beadingCarId }) => {
+const InteriorSection: React.FC<InteriorSectionProps> = ({beadingCarId}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
-    LeatherSeat: "",
-    Odometer: "",
-    Dashboard: "",
-    CabinFloor: "",
+    LeatherSeat: '',
+    Odometer: '',
+    Dashboard: '',
+    CabinFloor: '',
   });
 
   const [uploadedImages, setUploadedImages] = useState({
@@ -29,7 +36,7 @@ const InteriorSection: React.FC<InteriorSectionProps> = ({ beadingCarId }) => {
     try {
       const docType = 'Interior';
       const response = await fetch(
-        `https://caryanamindia.prodchunca.in.net/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`
+        `https://car01.dostenterprises.com/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`,
       );
       const text = await response.text();
       const data = JSON.parse(text);
@@ -39,21 +46,33 @@ const InteriorSection: React.FC<InteriorSectionProps> = ({ beadingCarId }) => {
       if (data?.object && Array.isArray(data.object)) {
         data.object.forEach((item: any) => {
           switch (item.subtype) {
-            case "LeatherSeat":
-              setFormData((prev) => ({ ...prev, LeatherSeat: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeatherSeats: item.documentLink }));
+            case 'LeatherSeat':
+              setFormData(prev => ({...prev, LeatherSeat: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeatherSeats: item.documentLink,
+              }));
               break;
-            case "Odometer":
-              setFormData((prev) => ({ ...prev, Odometer: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, Odometers: item.documentLink }));
+            case 'Odometer':
+              setFormData(prev => ({...prev, Odometer: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                Odometers: item.documentLink,
+              }));
               break;
-            case "CabinFloor":
-              setFormData((prev) => ({ ...prev, CabinFloor: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, CabinFloors: item.documentLink }));
+            case 'CabinFloor':
+              setFormData(prev => ({...prev, CabinFloor: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                CabinFloors: item.documentLink,
+              }));
               break;
-            case "Dashboard":
-              setFormData((prev) => ({ ...prev, Dashboard: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, Dashboards: item.documentLink }));
+            case 'Dashboard':
+              setFormData(prev => ({...prev, Dashboard: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                Dashboards: item.documentLink,
+              }));
               break;
             default:
               break;
@@ -74,15 +93,16 @@ const InteriorSection: React.FC<InteriorSectionProps> = ({ beadingCarId }) => {
     }
   }, [beadingCarId]);
 
-  const renderItem = (label: string, value: string, imageUrl: string | null) => (
+  const renderItem = (
+    label: string,
+    value: string,
+    imageUrl: string | null,
+  ) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>{label}: {value || '-'}</Text>
-      {imageUrl && (
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-        />
-      )}
+      <Text style={styles.itemText}>
+        {label}: {value || '-'}
+      </Text>
+      {imageUrl && <Image source={{uri: imageUrl}} style={styles.image} />}
     </View>
   );
 
@@ -110,10 +130,26 @@ const InteriorSection: React.FC<InteriorSectionProps> = ({ beadingCarId }) => {
 
         <View style={styles.card}>
           <View style={styles.gridContainer}>
-            {renderItem("Leather Seat", formData.LeatherSeat, uploadedImages.LeatherSeats)}
-            {renderItem("Odometer", formData.Odometer, uploadedImages.Odometers)}
-            {renderItem("Dashboard", formData.Dashboard, uploadedImages.Dashboards)}
-            {renderItem("Cabin Floor", formData.CabinFloor, uploadedImages.CabinFloors)}
+            {renderItem(
+              'Leather Seat',
+              formData.LeatherSeat,
+              uploadedImages.LeatherSeats,
+            )}
+            {renderItem(
+              'Odometer',
+              formData.Odometer,
+              uploadedImages.Odometers,
+            )}
+            {renderItem(
+              'Dashboard',
+              formData.Dashboard,
+              uploadedImages.Dashboards,
+            )}
+            {renderItem(
+              'Cabin Floor',
+              formData.CabinFloor,
+              uploadedImages.CabinFloors,
+            )}
           </View>
         </View>
       </View>
@@ -158,12 +194,11 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     padding: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     marginBottom: 550,
-
   },
   gridContainer: {
     gap: 20,

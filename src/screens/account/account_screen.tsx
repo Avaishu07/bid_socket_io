@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Text,
@@ -16,21 +16,21 @@ import {
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { launchImageLibrary } from 'react-native-image-picker';
+import {launchImageLibrary} from 'react-native-image-picker';
 import styles from '../account/AccountScreen.styles'; // Imported styles
- 
+
 const TOKEN_KEY = 'auth_token';
- 
-const AccountScreen = ({ navigation }: any) => {
+
+const AccountScreen = ({navigation}: any) => {
   const [doNotDisturb, setDoNotDisturb] = useState(false);
   const [dealerData, setDealerData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [photoUrl, setPhotoUrl] = useState<string | null>(null);
   const [modalVisible, setModalVisible] = useState(false);
- 
+
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const modalAnim = useRef(new Animated.Value(0)).current;
- 
+
   const parseJwt = (token: string) => {
     try {
       const base64Url = token.split('.')[1];
@@ -47,7 +47,7 @@ const AccountScreen = ({ navigation }: any) => {
       return null;
     }
   };
- 
+
   const fetchDealerData = async () => {
     try {
       setLoading(true);
@@ -57,7 +57,7 @@ const AccountScreen = ({ navigation }: any) => {
         setLoading(false);
         return;
       }
- 
+
       const decoded = parseJwt(token);
       const dealerId = decoded?.dealerId;
       const userId = decoded?.userId;
@@ -66,22 +66,26 @@ const AccountScreen = ({ navigation }: any) => {
         setLoading(false);
         return;
       }
- 
+
       const dealerRes = await fetch(
-        `https://caryanamindia.prodchunca.in.net/dealer/${dealerId}`,
+        `https://car01.dostenterprises.com/dealer/${dealerId}`,
         {
-          headers: { Authorization: `Bearer ${token}`, Accept: 'application/json' },
+          headers: {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+          },
         },
       );
- 
+
       const dealerJson = await dealerRes.json();
-      if (dealerRes.ok && dealerJson?.dealerDto) setDealerData(dealerJson.dealerDto);
- 
+      if (dealerRes.ok && dealerJson?.dealerDto)
+        setDealerData(dealerJson.dealerDto);
+
       const photoRes = await fetch(
-        `https://caryanamindia.prodchunca.in.net/ProfilePhoto/getbyuserid?userId=${userId}`,
-        { headers: { Authorization: `Bearer ${token}` } },
+        `https://car01.dostenterprises.com/ProfilePhoto/getbyuserid?userId=${userId}`,
+        {headers: {Authorization: `Bearer ${token}`}},
       );
- 
+
       if (photoRes.ok) {
         const blob = await photoRes.blob();
         const reader = new FileReader();
@@ -100,7 +104,7 @@ const AccountScreen = ({ navigation }: any) => {
       setLoading(false);
     }
   };
- 
+
   const handleAddImage = async () => {
     try {
       const token = await AsyncStorage.getItem(TOKEN_KEY);
@@ -108,25 +112,28 @@ const AccountScreen = ({ navigation }: any) => {
       const decoded = parseJwt(token);
       const userId = decoded?.userId;
       if (!userId) return Alert.alert('Error', 'User ID not found.');
- 
-      const result = await launchImageLibrary({ mediaType: 'photo', quality: 0.8 });
+
+      const result = await launchImageLibrary({
+        mediaType: 'photo',
+        quality: 0.8,
+      });
       if (result.didCancel || !result.assets?.length) return;
- 
+
       const file = result.assets[0];
       if (!file.uri) return Alert.alert('Error', 'Image URI not found.');
- 
+
       const formData = new FormData();
       formData.append('image', {
         uri: file.uri,
         name: file.fileName || 'photo.jpg',
         type: file.type || 'image/jpeg',
       } as any);
- 
+
       formData.append('userId', userId.toString());
- 
+
       setLoading(true);
       const res = await fetch(
-        'https://caryanamindia.prodchunca.in.net/ProfilePhoto/add',
+        'https://car01.dostenterprises.com/ProfilePhoto/add',
         {
           method: 'POST',
           headers: {
@@ -135,7 +142,7 @@ const AccountScreen = ({ navigation }: any) => {
           body: formData,
         },
       );
- 
+
       if (res.ok) {
         Alert.alert('Success', 'Profile photo added successfully.');
         fetchDealerData();
@@ -151,7 +158,7 @@ const AccountScreen = ({ navigation }: any) => {
       setLoading(false);
     }
   };
- 
+
   const handleDeleteImage = async () => {
     try {
       const token = await AsyncStorage.getItem(TOKEN_KEY);
@@ -159,16 +166,16 @@ const AccountScreen = ({ navigation }: any) => {
       const decoded = parseJwt(token);
       const userId = decoded?.userId;
       if (!userId) return Alert.alert('Error', 'User ID not found.');
- 
+
       setLoading(true);
       const res = await fetch(
-        `https://caryanamindia.prodchunca.in.net/ProfilePhoto/deletebyuserid?userId=${userId}`,
+        `https://car01.dostenterprises.com/ProfilePhoto/deletebyuserid?userId=${userId}`,
         {
           method: 'DELETE',
-          headers: { Authorization: `Bearer ${token}` },
+          headers: {Authorization: `Bearer ${token}`},
         },
       );
- 
+
       if (res.ok) {
         setPhotoUrl(null);
         Alert.alert('Deleted', 'Profile photo removed successfully.');
@@ -196,21 +203,27 @@ const AccountScreen = ({ navigation }: any) => {
       setLoading(false);
     }
   };
- 
+
   const openModal = () => {
     setModalVisible(true);
-    Animated.timing(modalAnim, { toValue: 1, duration: 250, useNativeDriver: true }).start();
+    Animated.timing(modalAnim, {
+      toValue: 1,
+      duration: 250,
+      useNativeDriver: true,
+    }).start();
   };
- 
+
   const closeModal = () => {
-    Animated.timing(modalAnim, { toValue: 0, duration: 200, useNativeDriver: true }).start(() =>
-      setModalVisible(false),
-    );
+    Animated.timing(modalAnim, {
+      toValue: 0,
+      duration: 200,
+      useNativeDriver: true,
+    }).start(() => setModalVisible(false));
   };
- 
+
   const confirmLogout = () => {
     Alert.alert('Logout', 'Are you sure you want to log out?', [
-      { text: 'Cancel', style: 'cancel' },
+      {text: 'Cancel', style: 'cancel'},
       {
         text: 'Logout',
         style: 'destructive',
@@ -225,7 +238,7 @@ const AccountScreen = ({ navigation }: any) => {
       },
     ]);
   };
- 
+
   useEffect(() => {
     Animated.timing(fadeAnim, {
       toValue: 1,
@@ -235,13 +248,15 @@ const AccountScreen = ({ navigation }: any) => {
     }).start();
     fetchDealerData();
   }, []);
- 
+
   return (
-    <Animated.View style={[styles.container, { opacity: fadeAnim }]}>
+    <Animated.View style={[styles.container, {opacity: fadeAnim}]}>
       {/* HEADER */}
       <View style={styles.header}>
         <View style={styles.headerInner}>
-          <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => navigation.navigate('Home')}>
             <View style={styles.logoWrapper}>
               <Image
                 source={require('../../assets/images/logo1.png')}
@@ -250,13 +265,16 @@ const AccountScreen = ({ navigation }: any) => {
               />
             </View>
           </TouchableOpacity>
- 
+
           <View style={styles.headerCenter}>
             <Text style={styles.headerTitle}>Profile</Text>
             <Text style={styles.subTitle}>Manage your account</Text>
           </View>
- 
-          <TouchableOpacity style={styles.logoutButton} onPress={confirmLogout} activeOpacity={0.85}>
+
+          <TouchableOpacity
+            style={styles.logoutButton}
+            onPress={confirmLogout}
+            activeOpacity={0.85}>
             <Image
               source={require('../../assets/images/image.png')}
               style={styles.logoutIcon}
@@ -265,22 +283,27 @@ const AccountScreen = ({ navigation }: any) => {
           </TouchableOpacity>
         </View>
       </View>
- 
+
       {/* MAIN CONTENT */}
-      <ScrollView style={styles.scrollArea} contentContainerStyle={{ paddingBottom: 40 }}>
+      <ScrollView
+        style={styles.scrollArea}
+        contentContainerStyle={{paddingBottom: 40}}>
         <View style={styles.topBanner}>
           <Text style={styles.topBannerText}>Get unlimited app access</Text>
           <Text style={styles.topBannerSub}>
             Buy <Text style={styles.highlight}>Basic</Text> at just ₹500 / month
           </Text>
-          <TouchableOpacity style={{ marginTop: 8 }}>
+          <TouchableOpacity style={{marginTop: 8}}>
             <Text style={styles.knowMore}>Know more</Text>
           </TouchableOpacity>
         </View>
- 
-        <TouchableOpacity activeOpacity={0.9} style={styles.profileCard} onPress={openModal}>
+
+        <TouchableOpacity
+          activeOpacity={0.9}
+          style={styles.profileCard}
+          onPress={openModal}>
           {photoUrl ? (
-            <Image source={{ uri: photoUrl }} style={styles.profileAvatar} />
+            <Image source={{uri: photoUrl}} style={styles.profileAvatar} />
           ) : (
             <Ionicons name="person-circle-outline" size={64} color="#262A4F" />
           )}
@@ -293,7 +316,8 @@ const AccountScreen = ({ navigation }: any) => {
                 : 'Name not available'}
             </Text>
             <Text style={styles.profileDetails}>
-              {dealerData?.mobileNo || (loading ? 'Loading...' : 'Mobile not available')}
+              {dealerData?.mobileNo ||
+                (loading ? 'Loading...' : 'Mobile not available')}
             </Text>
             <Text style={styles.profileDetails}>
               Shop: {dealerData?.shopName || (loading ? 'Loading...' : '—')}
@@ -301,7 +325,7 @@ const AccountScreen = ({ navigation }: any) => {
           </View>
           <Ionicons name="chevron-forward-outline" size={24} color="#A9ACD6" />
         </TouchableOpacity>
- 
+
         <View style={styles.twoCards}>
           <View style={styles.bigCard}>
             <Ionicons name="wallet-outline" size={34} color="#262A4F" />
@@ -313,21 +337,23 @@ const AccountScreen = ({ navigation }: any) => {
               <Text style={styles.bigAccentLink}>Recharge more</Text>
             </TouchableOpacity>
           </View>
- 
+
           <View style={styles.bigCard}>
             <Ionicons name="person-outline" size={34} color="#262A4F" />
             <Text style={styles.bigCardTitle}>Sales agent</Text>
             <Text style={styles.bigCardSub}>Organic Mumbai</Text>
-            <TouchableOpacity style={{ marginTop: 'auto' }}>
+            <TouchableOpacity style={{marginTop: 'auto'}}>
               <Text style={styles.bigAccentLink}>Call agent</Text>
             </TouchableOpacity>
           </View>
         </View>
- 
+
         <View style={styles.storyBanner}>
-          <Text style={styles.storyText}>Your stories now have a new destination</Text>
+          <Text style={styles.storyText}>
+            Your stories now have a new destination
+          </Text>
           <Text style={styles.bigCardSub}>Follow Caryanam Partners</Text>
- 
+
           <View style={styles.socialRow}>
             <TouchableOpacity
               style={styles.socialIcon}
@@ -336,20 +362,23 @@ const AccountScreen = ({ navigation }: any) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.socialIcon}
-              onPress={() => Linking.openURL('https://www.instagram.com/caryanamindia_/')}>
+              onPress={() =>
+                Linking.openURL('https://www.instagram.com/caryanamindia_/')
+              }>
               <Ionicons name="logo-instagram" size={18} color="#fff" />
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.socialIcon}
               onPress={() =>
-                Linking.openURL('https://www.facebook.com/p/CaryanamIndia-61564972127778/')
+                Linking.openURL(
+                  'https://www.facebook.com/p/CaryanamIndia-61564972127778/',
+                )
               }>
               <Ionicons name="logo-facebook" size={18} color="#fff" />
             </TouchableOpacity>
           </View>
         </View>
- 
-   
+
         {/*
         <View style={styles.settingsCard}>
           <Text style={styles.settingsTitle}>Do not disturb</Text>
@@ -362,24 +391,24 @@ const AccountScreen = ({ navigation }: any) => {
           />
         </View>
         */}
- 
+
         <TouchableOpacity style={styles.rewardsCard}>
           <Ionicons name="gift-outline" size={28} color="#262A4F" />
           <Text style={styles.rewardsText}>My rewards</Text>
         </TouchableOpacity>
- 
+
         <TouchableOpacity style={styles.logoutCard} onPress={confirmLogout}>
           <Ionicons name="log-out-outline" size={28} color="#262A4F" />
           <Text style={styles.logoutText}>Logout</Text>
         </TouchableOpacity>
       </ScrollView>
- 
+
       {/* MODAL */}
       <Modal transparent visible={modalVisible} onRequestClose={closeModal}>
         <TouchableWithoutFeedback onPress={closeModal}>
           <View style={styles.modalOverlay} />
         </TouchableWithoutFeedback>
- 
+
         <Animated.View
           style={[
             styles.modalContainer,
@@ -402,23 +431,31 @@ const AccountScreen = ({ navigation }: any) => {
               <View style={styles.profileImageContainer}>
                 {photoUrl ? (
                   <Image
-                    source={{ uri: photoUrl }}
+                    source={{uri: photoUrl}}
                     style={styles.profileImage}
                     resizeMode="cover"
                   />
                 ) : (
-                  <Ionicons name="person-circle-outline" size={120} color="#ccc" />
+                  <Ionicons
+                    name="person-circle-outline"
+                    size={120}
+                    color="#ccc"
+                  />
                 )}
                 <View style={styles.imageButtonRow}>
-                  <TouchableOpacity style={styles.addImageButton} onPress={handleAddImage}>
+                  <TouchableOpacity
+                    style={styles.addImageButton}
+                    onPress={handleAddImage}>
                     <Text style={styles.addImageText}>ADD IMAGE</Text>
                   </TouchableOpacity>
-                  <TouchableOpacity style={styles.deleteImageButton} onPress={handleDeleteImage}>
+                  <TouchableOpacity
+                    style={styles.deleteImageButton}
+                    onPress={handleDeleteImage}>
                     <Text style={styles.deleteImageText}>DELETE IMAGE</Text>
                   </TouchableOpacity>
                 </View>
               </View>
- 
+
               <View style={styles.detailBox}>
                 <DetailRow label="First Name" value={dealerData.firstName} />
                 <DetailRow label="Last Name" value={dealerData.lastName} />
@@ -429,7 +466,7 @@ const AccountScreen = ({ navigation }: any) => {
                 <DetailRow label="City" value={dealerData.city} />
                 <DetailRow label="Address" value={dealerData.address} />
               </View>
- 
+
               <TouchableOpacity style={styles.editButton} onPress={closeModal}>
                 <Text style={styles.editButtonText}>EDIT PROFILE</Text>
               </TouchableOpacity>
@@ -439,7 +476,7 @@ const AccountScreen = ({ navigation }: any) => {
           )}
         </Animated.View>
       </Modal>
- 
+
       {loading && (
         <View style={styles.loadingOverlay}>
           <ActivityIndicator size="large" color="#262A4F" />
@@ -448,9 +485,9 @@ const AccountScreen = ({ navigation }: any) => {
     </Animated.View>
   );
 };
- 
+
 // FIXED: Address wraps to next line
-const DetailRow = ({ label, value }: { label: string; value?: string }) => (
+const DetailRow = ({label, value}: {label: string; value?: string}) => (
   <View style={styles.detailRow}>
     <Text style={styles.detailLabel}>{label}</Text>
     <View style={styles.detailValueContainer}>
@@ -458,6 +495,5 @@ const DetailRow = ({ label, value }: { label: string; value?: string }) => (
     </View>
   </View>
 );
- 
+
 export default AccountScreen;
- 

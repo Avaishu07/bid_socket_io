@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {
   View,
   Text,
@@ -18,10 +18,10 @@ import {
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Icon from 'react-native-vector-icons/Ionicons';
-import { useNavigation } from '@react-navigation/native';
-import styles, { COLORS } from './AddOns.styles'; // ✅ Imported styles
+import {useNavigation} from '@react-navigation/native';
+import styles, {COLORS} from './AddOns.styles'; // ✅ Imported styles
 
-const { width } = Dimensions.get('window');
+const {width} = Dimensions.get('window');
 
 interface FinalBid {
   finalBidId: number;
@@ -69,17 +69,25 @@ const AddOnsScreen: React.FC = () => {
       const token = await AsyncStorage.getItem('auth_token');
       if (!token) throw new Error('No auth token found');
 
-      const response = await fetch('https://caryanamindia.prodchunca.in.net/Bid/finalBids', {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
-      });
+      const response = await fetch(
+        'https://car01.dostenterprises.com/Bid/finalBids',
+        {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+          },
+        },
+      );
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`);
       const json = await response.json();
       const bids = json.finalBids || [];
       bids.sort((a: FinalBid, b: FinalBid) => {
         if (a.updatedAt && b.updatedAt)
-          return new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime();
+          return (
+            new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
+          );
         return b.finalBidId - a.finalBidId;
       });
       setFinalBids(bids);
@@ -110,7 +118,7 @@ const AddOnsScreen: React.FC = () => {
         delay: i * 80,
         easing: Easing.out(Easing.cubic),
         useNativeDriver: true,
-      })
+      }),
     );
     Animated.stagger(60, animations).start();
   };
@@ -151,35 +159,48 @@ const AddOnsScreen: React.FC = () => {
   };
 
   const handleScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const { layoutMeasurement, contentOffset, contentSize } = event.nativeEvent;
-    const distanceFromBottom = contentSize.height - (layoutMeasurement.height + contentOffset.y);
+    const {layoutMeasurement, contentOffset, contentSize} = event.nativeEvent;
+    const distanceFromBottom =
+      contentSize.height - (layoutMeasurement.height + contentOffset.y);
     setShowScrollButton(distanceFromBottom >= 60);
   };
 
   const scrollToBottom = () => {
     if (flatListRef.current && finalBids.length > 0) {
-      flatListRef.current.scrollToEnd({ animated: true });
+      flatListRef.current.scrollToEnd({animated: true});
     }
   };
 
-  const spin = refreshSpin.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '360deg'] });
+  const spin = refreshSpin.interpolate({
+    inputRange: [0, 1],
+    outputRange: ['0deg', '360deg'],
+  });
 
-  const renderBidCard = ({ item, index }: { item: FinalBid; index: number }) => {
+  const renderBidCard = ({item, index}: {item: FinalBid; index: number}) => {
     const anim = itemAnims.current[index] || new Animated.Value(1);
-    const translateY = anim.interpolate({ inputRange: [0, 1], outputRange: [18, 0] });
+    const translateY = anim.interpolate({
+      inputRange: [0, 1],
+      outputRange: [18, 0],
+    });
     const opacity = anim;
 
     return (
-      <Animated.View style={[styles.card, { transform: [{ translateY }], opacity }]}>
-        <TouchableOpacity activeOpacity={0.95} onPress={() => openDetails(item)} style={{ flex: 1 }}>
+      <Animated.View
+        style={[styles.card, {transform: [{translateY}], opacity}]}>
+        <TouchableOpacity
+          activeOpacity={0.95}
+          onPress={() => openDetails(item)}
+          style={{flex: 1}}>
           <View style={styles.cardHeader}>
             <View>
               <Text style={styles.carIdText}>🏁 Car ID</Text>
               <Text style={styles.carIdNumber}>#{item.bidCarId}</Text>
             </View>
-            <View style={{ alignItems: 'flex-end' }}>
+            <View style={{alignItems: 'flex-end'}}>
               <Text style={styles.priceLabel}>Winning</Text>
-              <Text style={styles.priceValue}>₹{item.price.toLocaleString('en-IN')}</Text>
+              <Text style={styles.priceValue}>
+                ₹{item.price.toLocaleString('en-IN')}
+              </Text>
             </View>
           </View>
 
@@ -190,7 +211,9 @@ const AddOnsScreen: React.FC = () => {
             </View>
             <View style={styles.detailRowSmall}>
               <Text style={styles.smallLabel}>Seller Dealer</Text>
-              <Text style={styles.smallValue}>{item.sellerDealerId ?? '—'}</Text>
+              <Text style={styles.smallValue}>
+                {item.sellerDealerId ?? '—'}
+              </Text>
             </View>
             <View style={styles.detailRowSmall}>
               <Text style={styles.smallLabel}>Beading ID</Text>
@@ -207,7 +230,11 @@ const AddOnsScreen: React.FC = () => {
       <View style={styles.header}>
         <View style={styles.headerInner}>
           <View style={styles.logoCircle}>
-            <Image source={require('../../assets/images/logo1.png')} style={styles.logo} resizeMode="contain" />
+            <Image
+              source={require('../../assets/images/logo1.png')}
+              style={styles.logo}
+              resizeMode="contain"
+            />
           </View>
 
           <View style={styles.headerCenter}>
@@ -216,7 +243,8 @@ const AddOnsScreen: React.FC = () => {
           </View>
 
           <TouchableOpacity activeOpacity={0.85} onPress={onRefreshPress}>
-            <Animated.View style={[styles.refreshButton, { transform: [{ rotate: spin }] }]}>
+            <Animated.View
+              style={[styles.refreshButton, {transform: [{rotate: spin}]}]}>
               <Text style={styles.refreshIcon}>⟳</Text>
             </Animated.View>
           </TouchableOpacity>
@@ -225,14 +253,20 @@ const AddOnsScreen: React.FC = () => {
 
       <View style={styles.contentWrap}>
         {loading ? (
-          <ActivityIndicator size="large" color={COLORS.primary} style={{ marginTop: 40 }} />
+          <ActivityIndicator
+            size="large"
+            color={COLORS.primary}
+            style={{marginTop: 40}}
+          />
         ) : error ? (
           <Text style={styles.errorText}>❌ {error}</Text>
         ) : displayedBids.length === 0 ? (
           <View style={styles.emptyState}>
             <Icon name="car-outline" size={80} color="#a9acd6" />
             <Text style={styles.emptyTitle}>No final bids</Text>
-            <Text style={styles.emptySub}>Try refreshing or check back later.</Text>
+            <Text style={styles.emptySub}>
+              Try refreshing or check back later.
+            </Text>
           </View>
         ) : (
           <FlatList
@@ -256,14 +290,32 @@ const AddOnsScreen: React.FC = () => {
         </TouchableOpacity>
       )}
 
-      <Modal visible={modalVisible} transparent animationType="none" onRequestClose={closeModal}>
-        <Animated.View style={[styles.modalOverlay, { opacity: modalAnim.interpolate({ inputRange: [0, 1], outputRange: [0, 1] }) }]}>
+      <Modal
+        visible={modalVisible}
+        transparent
+        animationType="none"
+        onRequestClose={closeModal}>
+        <Animated.View
+          style={[
+            styles.modalOverlay,
+            {
+              opacity: modalAnim.interpolate({
+                inputRange: [0, 1],
+                outputRange: [0, 1],
+              }),
+            },
+          ]}>
           <Animated.View
             style={[
               styles.modalContainer,
               {
                 transform: [
-                  { scale: modalAnim.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1] }) },
+                  {
+                    scale: modalAnim.interpolate({
+                      inputRange: [0, 1],
+                      outputRange: [0.96, 1],
+                    }),
+                  },
                 ],
               },
             ]}>
@@ -276,25 +328,37 @@ const AddOnsScreen: React.FC = () => {
                 <>
                   <View style={styles.modalDetailRow}>
                     <Text style={styles.modalLabel}>Car ID</Text>
-                    <Text style={styles.modalValue}>#{selectedBid.bidCarId}</Text>
+                    <Text style={styles.modalValue}>
+                      #{selectedBid.bidCarId}
+                    </Text>
                   </View>
                   <View style={styles.modalDetailRow}>
                     <Text style={styles.modalLabel}>Winning Price</Text>
-                    <Text style={[styles.modalValue, { color: COLORS.primary, fontWeight: '700' }]}>
+                    <Text
+                      style={[
+                        styles.modalValue,
+                        {color: COLORS.primary, fontWeight: '700'},
+                      ]}>
                       ₹{selectedBid.price.toLocaleString('en-IN')}
                     </Text>
                   </View>
                   <View style={styles.modalDetailRow}>
                     <Text style={styles.modalLabel}>Buyer Dealer ID</Text>
-                    <Text style={styles.modalValue}>{selectedBid.buyerDealerId}</Text>
+                    <Text style={styles.modalValue}>
+                      {selectedBid.buyerDealerId}
+                    </Text>
                   </View>
                   <View style={styles.modalDetailRow}>
                     <Text style={styles.modalLabel}>Seller Dealer ID</Text>
-                    <Text style={styles.modalValue}>{selectedBid.sellerDealerId ?? 'N/A'}</Text>
+                    <Text style={styles.modalValue}>
+                      {selectedBid.sellerDealerId ?? 'N/A'}
+                    </Text>
                   </View>
                   <View style={styles.modalDetailRow}>
                     <Text style={styles.modalLabel}>Beading Car ID</Text>
-                    <Text style={styles.modalValue}>{selectedBid.beadingCarId ?? 'N/A'}</Text>
+                    <Text style={styles.modalValue}>
+                      {selectedBid.beadingCarId ?? 'N/A'}
+                    </Text>
                   </View>
                 </>
               ) : (

@@ -1,58 +1,65 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 
 interface ExteriorSectionProps {
   beadingCarId: string;
 }
 
-const ExteriorSection: React.FC<ExteriorSectionProps> = ({ beadingCarId }) => {
+const ExteriorSection: React.FC<ExteriorSectionProps> = ({beadingCarId}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  
+
   const [formData, setFormData] = useState({
-    BonnetHood: "",
-    RightDoorFront: "",
-    LeftDoorFront: "",
-    LeftFender: "",
-    RightFender: "",
-    LeftQuarterPanel: "",
-    RightQuarterPanel: "",
-    Roof: "",
-    DickyDoor: "",
-    LeftDoorRear: "",
-    RightDoorRear: "",
-    LHSFrontTyre: "",
-    RHSFrontTyre: "",
-    LHSRearTyre: "",
-    RHSRearTyre: "",
-    SpareTyre: "",
-    Windshield: "",
-    FrontWindshield: "",
-    RearWindshield: "",
-    Light: "",
-    FrontBumper: "",
-    RearBumper: "",
-    LHSHeadlight: "",
-    RHSHeadlight: "",
-    LHSTaillight: "",
-    RHSTaillight: "",
-    HeadLightSupport: "",
-    RadiatorSupport: "",
-    AlloyWheel: "",
-    CowlTop: "",
-    BootFloor: "",
-    RightApronLEG: "",
-    LeftApronLEG: "",
-    RightApron: "",
-    LeftApron: "",
-    LeftPillar: "",
-    LeftPillarA: "",
-    LeftPillarB: "",
-    LeftPillarC: "",
-    RightPillar: "",
-    RightPillarA: "",
-    RightPillarB: "",
-    RightPillarC: "",
+    BonnetHood: '',
+    RightDoorFront: '',
+    LeftDoorFront: '',
+    LeftFender: '',
+    RightFender: '',
+    LeftQuarterPanel: '',
+    RightQuarterPanel: '',
+    Roof: '',
+    DickyDoor: '',
+    LeftDoorRear: '',
+    RightDoorRear: '',
+    LHSFrontTyre: '',
+    RHSFrontTyre: '',
+    LHSRearTyre: '',
+    RHSRearTyre: '',
+    SpareTyre: '',
+    Windshield: '',
+    FrontWindshield: '',
+    RearWindshield: '',
+    Light: '',
+    FrontBumper: '',
+    RearBumper: '',
+    LHSHeadlight: '',
+    RHSHeadlight: '',
+    LHSTaillight: '',
+    RHSTaillight: '',
+    HeadLightSupport: '',
+    RadiatorSupport: '',
+    AlloyWheel: '',
+    CowlTop: '',
+    BootFloor: '',
+    RightApronLEG: '',
+    LeftApronLEG: '',
+    RightApron: '',
+    LeftApron: '',
+    LeftPillar: '',
+    LeftPillarA: '',
+    LeftPillarB: '',
+    LeftPillarC: '',
+    RightPillar: '',
+    RightPillarA: '',
+    RightPillarB: '',
+    RightPillarC: '',
   });
 
   const [uploadedImages, setUploadedImages] = useState({
@@ -107,7 +114,7 @@ const ExteriorSection: React.FC<ExteriorSectionProps> = ({ beadingCarId }) => {
     try {
       const docType = 'Exterior';
       const response = await fetch(
-        `https://caryanamindia.prodchunca.in.net/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`
+        `https://car01.dostenterprises.com/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`,
       );
       const text = await response.text();
       const data = JSON.parse(text);
@@ -117,177 +124,300 @@ const ExteriorSection: React.FC<ExteriorSectionProps> = ({ beadingCarId }) => {
       if (data?.object && Array.isArray(data.object)) {
         data.object.forEach((item: any) => {
           switch (item.subtype) {
-            case "BonnetHood":
-              setFormData((prev) => ({ ...prev, BonnetHood: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, BonnetHoods: item.documentLink }));
+            case 'BonnetHood':
+              setFormData(prev => ({...prev, BonnetHood: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                BonnetHoods: item.documentLink,
+              }));
               break;
-            case "RightDoorFront":
-              setFormData((prev) => ({ ...prev, RightDoorFront: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RightDoorFronts: item.documentLink }));
+            case 'RightDoorFront':
+              setFormData(prev => ({...prev, RightDoorFront: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RightDoorFronts: item.documentLink,
+              }));
               break;
-            case "LeftDoorFront":
-              setFormData((prev) => ({ ...prev, LeftDoorFront: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeftDoorFronts: item.documentLink }));
+            case 'LeftDoorFront':
+              setFormData(prev => ({...prev, LeftDoorFront: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeftDoorFronts: item.documentLink,
+              }));
               break;
-            case "RightFender":
-              setFormData((prev) => ({ ...prev, RightFender: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RightFenders: item.documentLink }));
+            case 'RightFender':
+              setFormData(prev => ({...prev, RightFender: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RightFenders: item.documentLink,
+              }));
               break;
-            case "LeftQuarterPanel":
-              setFormData((prev) => ({ ...prev, LeftQuarterPanel: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeftQuarterPanels: item.documentLink }));
+            case 'LeftQuarterPanel':
+              setFormData(prev => ({...prev, LeftQuarterPanel: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeftQuarterPanels: item.documentLink,
+              }));
               break;
-            case "RightQuarterPanel":
-              setFormData((prev) => ({ ...prev, RightQuarterPanel: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RightQuarterPanels: item.documentLink }));
+            case 'RightQuarterPanel':
+              setFormData(prev => ({...prev, RightQuarterPanel: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RightQuarterPanels: item.documentLink,
+              }));
               break;
-            case "Roof":
-              setFormData((prev) => ({ ...prev, Roof: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, Roofs: item.documentLink }));
+            case 'Roof':
+              setFormData(prev => ({...prev, Roof: item.comment}));
+              setUploadedImages(prev => ({...prev, Roofs: item.documentLink}));
               break;
-            case "DickyDoor":
-              setFormData((prev) => ({ ...prev, DickyDoor: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, DickyDoors: item.documentLink }));
+            case 'DickyDoor':
+              setFormData(prev => ({...prev, DickyDoor: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                DickyDoors: item.documentLink,
+              }));
               break;
-            case "LeftDoorRear":
-              setFormData((prev) => ({ ...prev, LeftDoorRear: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeftDoorRears: item.documentLink }));
+            case 'LeftDoorRear':
+              setFormData(prev => ({...prev, LeftDoorRear: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeftDoorRears: item.documentLink,
+              }));
               break;
-            case "LeftFender":
-              setFormData((prev) => ({ ...prev, LeftFender: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeftFenders: item.documentLink }));
+            case 'LeftFender':
+              setFormData(prev => ({...prev, LeftFender: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeftFenders: item.documentLink,
+              }));
               break;
-            case "RightDoorRear":
-              setFormData((prev) => ({ ...prev, RightDoorRear: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RightDoorRears: item.documentLink }));
+            case 'RightDoorRear':
+              setFormData(prev => ({...prev, RightDoorRear: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RightDoorRears: item.documentLink,
+              }));
               break;
-            case "LHSFrontTyre":
-              setFormData((prev) => ({ ...prev, LHSFrontTyre: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LHSFrontTyres: item.documentLink }));
+            case 'LHSFrontTyre':
+              setFormData(prev => ({...prev, LHSFrontTyre: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LHSFrontTyres: item.documentLink,
+              }));
               break;
-            case "RHSFrontTyre":
-              setFormData((prev) => ({ ...prev, RHSFrontTyre: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RHSFrontTyres: item.documentLink }));
+            case 'RHSFrontTyre':
+              setFormData(prev => ({...prev, RHSFrontTyre: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RHSFrontTyres: item.documentLink,
+              }));
               break;
-            case "LHSRearTyre":
-              setFormData((prev) => ({ ...prev, LHSRearTyre: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LHSRearTyres: item.documentLink }));
+            case 'LHSRearTyre':
+              setFormData(prev => ({...prev, LHSRearTyre: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LHSRearTyres: item.documentLink,
+              }));
               break;
-            case "RHSRearTyre":
-              setFormData((prev) => ({ ...prev, RHSRearTyre: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RHSRearTyres: item.documentLink }));
+            case 'RHSRearTyre':
+              setFormData(prev => ({...prev, RHSRearTyre: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RHSRearTyres: item.documentLink,
+              }));
               break;
-            case "SpareTyre":
-              setFormData((prev) => ({ ...prev, SpareTyre: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, SpareTyres: item.documentLink }));
+            case 'SpareTyre':
+              setFormData(prev => ({...prev, SpareTyre: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                SpareTyres: item.documentLink,
+              }));
               break;
-            case "Windshield":
-              setFormData((prev) => ({ ...prev, Windshield: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, Windshields: item.documentLink }));
+            case 'Windshield':
+              setFormData(prev => ({...prev, Windshield: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                Windshields: item.documentLink,
+              }));
               break;
-            case "FrontWindshield":
-              setFormData((prev) => ({ ...prev, FrontWindshield: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, FrontWindshields: item.documentLink }));
+            case 'FrontWindshield':
+              setFormData(prev => ({...prev, FrontWindshield: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                FrontWindshields: item.documentLink,
+              }));
               break;
-            case "RearWindshield":
-              setFormData((prev) => ({ ...prev, RearWindshield: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RearWindshields: item.documentLink }));
+            case 'RearWindshield':
+              setFormData(prev => ({...prev, RearWindshield: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RearWindshields: item.documentLink,
+              }));
               break;
-            case "Light":
-              setFormData((prev) => ({ ...prev, Light: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, Lights: item.documentLink }));
+            case 'Light':
+              setFormData(prev => ({...prev, Light: item.comment}));
+              setUploadedImages(prev => ({...prev, Lights: item.documentLink}));
               break;
-            case "FrontBumper":
-              setFormData((prev) => ({ ...prev, FrontBumper: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, FrontBumpers: item.documentLink }));
+            case 'FrontBumper':
+              setFormData(prev => ({...prev, FrontBumper: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                FrontBumpers: item.documentLink,
+              }));
               break;
-            case "RearBumper":
-              setFormData((prev) => ({ ...prev, RearBumper: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RearBumpers: item.documentLink }));
+            case 'RearBumper':
+              setFormData(prev => ({...prev, RearBumper: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RearBumpers: item.documentLink,
+              }));
               break;
-            case "LHSHeadlight":
-              setFormData((prev) => ({ ...prev, LHSHeadlight: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LHSHeadlights: item.documentLink }));
+            case 'LHSHeadlight':
+              setFormData(prev => ({...prev, LHSHeadlight: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LHSHeadlights: item.documentLink,
+              }));
               break;
-            case "RHSHeadlight":
-              setFormData((prev) => ({ ...prev, RHSHeadlight: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RHSHeadlights: item.documentLink }));
+            case 'RHSHeadlight':
+              setFormData(prev => ({...prev, RHSHeadlight: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RHSHeadlights: item.documentLink,
+              }));
               break;
-            case "LHSTaillight":
-              setFormData((prev) => ({ ...prev, LHSTaillight: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LHSTaillights: item.documentLink }));
+            case 'LHSTaillight':
+              setFormData(prev => ({...prev, LHSTaillight: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LHSTaillights: item.documentLink,
+              }));
               break;
-            case "RHSTaillight":
-              setFormData((prev) => ({ ...prev, RHSTaillight: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RHSTaillights: item.documentLink }));
+            case 'RHSTaillight':
+              setFormData(prev => ({...prev, RHSTaillight: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RHSTaillights: item.documentLink,
+              }));
               break;
-            case "HeadLightSupport":
-              setFormData((prev) => ({ ...prev, HeadLightSupport: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, HeadLightSupports: item.documentLink }));
+            case 'HeadLightSupport':
+              setFormData(prev => ({...prev, HeadLightSupport: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                HeadLightSupports: item.documentLink,
+              }));
               break;
-            case "RadiatorSupport":
-              setFormData((prev) => ({ ...prev, RadiatorSupport: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RadiatorSupports: item.documentLink }));
+            case 'RadiatorSupport':
+              setFormData(prev => ({...prev, RadiatorSupport: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RadiatorSupports: item.documentLink,
+              }));
               break;
-            case "AlloyWheel":
-              setFormData((prev) => ({ ...prev, AlloyWheel: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, AlloyWheels: item.documentLink }));
+            case 'AlloyWheel':
+              setFormData(prev => ({...prev, AlloyWheel: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                AlloyWheels: item.documentLink,
+              }));
               break;
-            case "CowlTop":
-              setFormData((prev) => ({ ...prev, CowlTop: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, CowlTops: item.documentLink }));
+            case 'CowlTop':
+              setFormData(prev => ({...prev, CowlTop: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                CowlTops: item.documentLink,
+              }));
               break;
-            case "BootFloor":
-              setFormData((prev) => ({ ...prev, BootFloor: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, BootFloors: item.documentLink }));
+            case 'BootFloor':
+              setFormData(prev => ({...prev, BootFloor: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                BootFloors: item.documentLink,
+              }));
               break;
-            case "RightApronLEG":
-              setFormData((prev) => ({ ...prev, RightApronLEG: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RightApronLEGs: item.documentLink }));
+            case 'RightApronLEG':
+              setFormData(prev => ({...prev, RightApronLEG: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RightApronLEGs: item.documentLink,
+              }));
               break;
-            case "LeftApronLEG":
-              setFormData((prev) => ({ ...prev, LeftApronLEG: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeftApronLEGs: item.documentLink }));
+            case 'LeftApronLEG':
+              setFormData(prev => ({...prev, LeftApronLEG: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeftApronLEGs: item.documentLink,
+              }));
               break;
-            case "RightApron":
-              setFormData((prev) => ({ ...prev, RightApron: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RightAprons: item.documentLink }));
+            case 'RightApron':
+              setFormData(prev => ({...prev, RightApron: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RightAprons: item.documentLink,
+              }));
               break;
-            case "LeftApron":
-              setFormData((prev) => ({ ...prev, LeftApron: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeftAprons: item.documentLink }));
+            case 'LeftApron':
+              setFormData(prev => ({...prev, LeftApron: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeftAprons: item.documentLink,
+              }));
               break;
-            case "LeftPillar":
-              setFormData((prev) => ({ ...prev, LeftPillar: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeftPillars: item.documentLink }));
+            case 'LeftPillar':
+              setFormData(prev => ({...prev, LeftPillar: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeftPillars: item.documentLink,
+              }));
               break;
-            case "LeftPillarA":
-              setFormData((prev) => ({ ...prev, LeftPillarA: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeftPillarAs: item.documentLink }));
+            case 'LeftPillarA':
+              setFormData(prev => ({...prev, LeftPillarA: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeftPillarAs: item.documentLink,
+              }));
               break;
-            case "LeftPillarB":
-              setFormData((prev) => ({ ...prev, LeftPillarB: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeftPillarBs: item.documentLink }));
+            case 'LeftPillarB':
+              setFormData(prev => ({...prev, LeftPillarB: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeftPillarBs: item.documentLink,
+              }));
               break;
-            case "LeftPillarC":
-              setFormData((prev) => ({ ...prev, LeftPillarC: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, LeftPillarCs: item.documentLink }));
+            case 'LeftPillarC':
+              setFormData(prev => ({...prev, LeftPillarC: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                LeftPillarCs: item.documentLink,
+              }));
               break;
-            case "RightPillar":
-              setFormData((prev) => ({ ...prev, RightPillar: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RightPillars: item.documentLink }));
+            case 'RightPillar':
+              setFormData(prev => ({...prev, RightPillar: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RightPillars: item.documentLink,
+              }));
               break;
-            case "RightPillarA":
-              setFormData((prev) => ({ ...prev, RightPillarA: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RightPillarAs: item.documentLink }));
+            case 'RightPillarA':
+              setFormData(prev => ({...prev, RightPillarA: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RightPillarAs: item.documentLink,
+              }));
               break;
-            case "RightPillarB":
-              setFormData((prev) => ({ ...prev, RightPillarB: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RightPillarBs: item.documentLink }));
+            case 'RightPillarB':
+              setFormData(prev => ({...prev, RightPillarB: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RightPillarBs: item.documentLink,
+              }));
               break;
-            case "RightPillarC":
-              setFormData((prev) => ({ ...prev, RightPillarC: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, RightPillarCs: item.documentLink }));
+            case 'RightPillarC':
+              setFormData(prev => ({...prev, RightPillarC: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                RightPillarCs: item.documentLink,
+              }));
               break;
             default:
               break;
@@ -308,15 +438,16 @@ const ExteriorSection: React.FC<ExteriorSectionProps> = ({ beadingCarId }) => {
     }
   }, [beadingCarId]);
 
-  const renderItem = (label: string, value: string, imageUrl: string | null) => (
+  const renderItem = (
+    label: string,
+    value: string,
+    imageUrl: string | null,
+  ) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>{label}: {value || '-'}</Text>
-      {imageUrl && (
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-        />
-      )}
+      <Text style={styles.itemText}>
+        {label}: {value || '-'}
+      </Text>
+      {imageUrl && <Image source={{uri: imageUrl}} style={styles.image} />}
     </View>
   );
 
@@ -345,73 +476,233 @@ const ExteriorSection: React.FC<ExteriorSectionProps> = ({ beadingCarId }) => {
         <Text style={styles.sectionTitle}>Exterior Panel</Text>
         <View style={styles.card}>
           <View style={styles.gridContainer}>
-            {renderItem("Bonnet Hood", formData.BonnetHood, uploadedImages.BonnetHoods)}
-            {renderItem("Right Door Front", formData.RightDoorFront, uploadedImages.RightDoorFronts)}
-            {renderItem("Left Door Front", formData.LeftDoorFront, uploadedImages.LeftDoorFronts)}
-            {renderItem("Left Fender", formData.LeftFender, uploadedImages.LeftFenders)}
-            {renderItem("Right Fender", formData.RightFender, uploadedImages.RightFenders)}
-            {renderItem("Left Quarter Panel", formData.LeftQuarterPanel, uploadedImages.LeftQuarterPanels)}
-            {renderItem("Right Quarter Panel", formData.RightQuarterPanel, uploadedImages.RightQuarterPanels)}
-            {renderItem("Roof", formData.Roof, uploadedImages.Roofs)}
-            {renderItem("Dicky Door", formData.DickyDoor, uploadedImages.DickyDoors)}
-            {renderItem("Left Door Rear", formData.LeftDoorRear, uploadedImages.LeftDoorRears)}
-            {renderItem("Right Door Rear", formData.RightDoorRear, uploadedImages.RightDoorRears)}
+            {renderItem(
+              'Bonnet Hood',
+              formData.BonnetHood,
+              uploadedImages.BonnetHoods,
+            )}
+            {renderItem(
+              'Right Door Front',
+              formData.RightDoorFront,
+              uploadedImages.RightDoorFronts,
+            )}
+            {renderItem(
+              'Left Door Front',
+              formData.LeftDoorFront,
+              uploadedImages.LeftDoorFronts,
+            )}
+            {renderItem(
+              'Left Fender',
+              formData.LeftFender,
+              uploadedImages.LeftFenders,
+            )}
+            {renderItem(
+              'Right Fender',
+              formData.RightFender,
+              uploadedImages.RightFenders,
+            )}
+            {renderItem(
+              'Left Quarter Panel',
+              formData.LeftQuarterPanel,
+              uploadedImages.LeftQuarterPanels,
+            )}
+            {renderItem(
+              'Right Quarter Panel',
+              formData.RightQuarterPanel,
+              uploadedImages.RightQuarterPanels,
+            )}
+            {renderItem('Roof', formData.Roof, uploadedImages.Roofs)}
+            {renderItem(
+              'Dicky Door',
+              formData.DickyDoor,
+              uploadedImages.DickyDoors,
+            )}
+            {renderItem(
+              'Left Door Rear',
+              formData.LeftDoorRear,
+              uploadedImages.LeftDoorRears,
+            )}
+            {renderItem(
+              'Right Door Rear',
+              formData.RightDoorRear,
+              uploadedImages.RightDoorRears,
+            )}
           </View>
         </View>
 
         <Text style={styles.sectionTitle}>Tyre</Text>
         <View style={styles.card}>
           <View style={styles.gridContainer}>
-            {renderItem("LHS Front Tyre", formData.LHSFrontTyre, uploadedImages.LHSFrontTyres)}
-            {renderItem("RHS Front Tyre", formData.RHSFrontTyre, uploadedImages.RHSFrontTyres)}
-            {renderItem("LHS Rear Tyre", formData.LHSRearTyre, uploadedImages.LHSRearTyres)}
-            {renderItem("RHS Rear Tyre", formData.RHSRearTyre, uploadedImages.RHSRearTyres)}
-            {renderItem("Spare Tyre", formData.SpareTyre, uploadedImages.SpareTyres)}
+            {renderItem(
+              'LHS Front Tyre',
+              formData.LHSFrontTyre,
+              uploadedImages.LHSFrontTyres,
+            )}
+            {renderItem(
+              'RHS Front Tyre',
+              formData.RHSFrontTyre,
+              uploadedImages.RHSFrontTyres,
+            )}
+            {renderItem(
+              'LHS Rear Tyre',
+              formData.LHSRearTyre,
+              uploadedImages.LHSRearTyres,
+            )}
+            {renderItem(
+              'RHS Rear Tyre',
+              formData.RHSRearTyre,
+              uploadedImages.RHSRearTyres,
+            )}
+            {renderItem(
+              'Spare Tyre',
+              formData.SpareTyre,
+              uploadedImages.SpareTyres,
+            )}
           </View>
         </View>
 
         <Text style={styles.sectionTitle}>Windshield and Lights</Text>
         <View style={styles.card}>
           <View style={styles.gridContainer}>
-            {renderItem("Windshield", formData.Windshield, uploadedImages.Windshields)}
-            {renderItem("Front Windshield", formData.FrontWindshield, uploadedImages.FrontWindshields)}
-            {renderItem("Rear Windshield", formData.RearWindshield, uploadedImages.RearWindshields)}
-            {renderItem("Light", formData.Light, uploadedImages.Lights)}
-            {renderItem("Front Bumper", formData.FrontBumper, uploadedImages.FrontBumpers)}
-            {renderItem("Rear Bumper", formData.RearBumper, uploadedImages.RearBumpers)}
-            {renderItem("LHS Headlight", formData.LHSHeadlight, uploadedImages.LHSHeadlights)}
-            {renderItem("RHS Headlight", formData.RHSHeadlight, uploadedImages.RHSHeadlights)}
-            {renderItem("LHS Taillight", formData.LHSTaillight, uploadedImages.LHSTaillights)}
-            {renderItem("RHS Taillight", formData.RHSTaillight, uploadedImages.RHSTaillights)}
+            {renderItem(
+              'Windshield',
+              formData.Windshield,
+              uploadedImages.Windshields,
+            )}
+            {renderItem(
+              'Front Windshield',
+              formData.FrontWindshield,
+              uploadedImages.FrontWindshields,
+            )}
+            {renderItem(
+              'Rear Windshield',
+              formData.RearWindshield,
+              uploadedImages.RearWindshields,
+            )}
+            {renderItem('Light', formData.Light, uploadedImages.Lights)}
+            {renderItem(
+              'Front Bumper',
+              formData.FrontBumper,
+              uploadedImages.FrontBumpers,
+            )}
+            {renderItem(
+              'Rear Bumper',
+              formData.RearBumper,
+              uploadedImages.RearBumpers,
+            )}
+            {renderItem(
+              'LHS Headlight',
+              formData.LHSHeadlight,
+              uploadedImages.LHSHeadlights,
+            )}
+            {renderItem(
+              'RHS Headlight',
+              formData.RHSHeadlight,
+              uploadedImages.RHSHeadlights,
+            )}
+            {renderItem(
+              'LHS Taillight',
+              formData.LHSTaillight,
+              uploadedImages.LHSTaillights,
+            )}
+            {renderItem(
+              'RHS Taillight',
+              formData.RHSTaillight,
+              uploadedImages.RHSTaillights,
+            )}
           </View>
         </View>
 
         <Text style={styles.sectionTitle}>Other Components</Text>
         <View style={styles.card}>
           <View style={styles.gridContainer}>
-            {renderItem("Head Light Support", formData.HeadLightSupport, uploadedImages.HeadLightSupports)}
-            {renderItem("Radiator Support", formData.RadiatorSupport, uploadedImages.RadiatorSupports)}
-            {renderItem("Alloy Wheel", formData.AlloyWheel, uploadedImages.AlloyWheels)}
+            {renderItem(
+              'Head Light Support',
+              formData.HeadLightSupport,
+              uploadedImages.HeadLightSupports,
+            )}
+            {renderItem(
+              'Radiator Support',
+              formData.RadiatorSupport,
+              uploadedImages.RadiatorSupports,
+            )}
+            {renderItem(
+              'Alloy Wheel',
+              formData.AlloyWheel,
+              uploadedImages.AlloyWheels,
+            )}
           </View>
         </View>
 
         <Text style={styles.sectionTitle}>Structure</Text>
         <View style={styles.card}>
           <View style={styles.gridContainer}>
-            {renderItem("Cowl Top", formData.CowlTop, uploadedImages.CowlTops)}
-            {renderItem("Boot Floor", formData.BootFloor, uploadedImages.BootFloors)}
-            {renderItem("Right Apron LEG", formData.RightApronLEG, uploadedImages.RightApronLEGs)}
-            {renderItem("Left Apron LEG", formData.LeftApronLEG, uploadedImages.LeftApronLEGs)}
-            {renderItem("Right Apron", formData.RightApron, uploadedImages.RightAprons)}
-            {renderItem("Left Apron", formData.LeftApron, uploadedImages.LeftAprons)}
-            {renderItem("Left Pillar", formData.LeftPillar, uploadedImages.LeftPillars)}
-            {renderItem("Left Pillar A", formData.LeftPillarA, uploadedImages.LeftPillarAs)}
-            {renderItem("Left Pillar B", formData.LeftPillarB, uploadedImages.LeftPillarBs)}
-            {renderItem("Left Pillar C", formData.LeftPillarC, uploadedImages.LeftPillarCs)}
-            {renderItem("Right Pillar", formData.RightPillar, uploadedImages.RightPillars)}
-            {renderItem("Right Pillar A", formData.RightPillarA, uploadedImages.RightPillarAs)}
-            {renderItem("Right Pillar B", formData.RightPillarB, uploadedImages.RightPillarBs)}
-            {renderItem("Right Pillar C", formData.RightPillarC, uploadedImages.RightPillarCs)}
+            {renderItem('Cowl Top', formData.CowlTop, uploadedImages.CowlTops)}
+            {renderItem(
+              'Boot Floor',
+              formData.BootFloor,
+              uploadedImages.BootFloors,
+            )}
+            {renderItem(
+              'Right Apron LEG',
+              formData.RightApronLEG,
+              uploadedImages.RightApronLEGs,
+            )}
+            {renderItem(
+              'Left Apron LEG',
+              formData.LeftApronLEG,
+              uploadedImages.LeftApronLEGs,
+            )}
+            {renderItem(
+              'Right Apron',
+              formData.RightApron,
+              uploadedImages.RightAprons,
+            )}
+            {renderItem(
+              'Left Apron',
+              formData.LeftApron,
+              uploadedImages.LeftAprons,
+            )}
+            {renderItem(
+              'Left Pillar',
+              formData.LeftPillar,
+              uploadedImages.LeftPillars,
+            )}
+            {renderItem(
+              'Left Pillar A',
+              formData.LeftPillarA,
+              uploadedImages.LeftPillarAs,
+            )}
+            {renderItem(
+              'Left Pillar B',
+              formData.LeftPillarB,
+              uploadedImages.LeftPillarBs,
+            )}
+            {renderItem(
+              'Left Pillar C',
+              formData.LeftPillarC,
+              uploadedImages.LeftPillarCs,
+            )}
+            {renderItem(
+              'Right Pillar',
+              formData.RightPillar,
+              uploadedImages.RightPillars,
+            )}
+            {renderItem(
+              'Right Pillar A',
+              formData.RightPillarA,
+              uploadedImages.RightPillarAs,
+            )}
+            {renderItem(
+              'Right Pillar B',
+              formData.RightPillarB,
+              uploadedImages.RightPillarBs,
+            )}
+            {renderItem(
+              'Right Pillar C',
+              formData.RightPillarC,
+              uploadedImages.RightPillarCs,
+            )}
           </View>
         </View>
       </View>
@@ -467,12 +758,11 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     padding: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
     marginBottom: 500,
-
   },
   gridContainer: {
     gap: 20,

@@ -17,15 +17,15 @@ import LinearGradient from 'react-native-linear-gradient';
 import {useWebSocket} from '../../utility/WebSocketConnection';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Ionicons from 'react-native-vector-icons/Ionicons';
- 
+
 const {width, height} = Dimensions.get('window');
- 
+
 const TOKEN_KEY = 'auth_token';
 const USER_ID_KEY = 'user_id';
 const USER_EMAIL_KEY = 'user_email';
 const DEALER_ID_KEY = 'dealerId';
 const USER_DATA_KEY = 'userData';
- 
+
 type RootStackParamList = {
   Login: undefined;
   Home: {
@@ -35,21 +35,21 @@ type RootStackParamList = {
   };
   ForgotPassword: undefined;
 };
- 
+
 type LoginScreenNavigationProp = StackNavigationProp<
   RootStackParamList,
   'Login'
 >;
- 
+
 const Login = () => {
-  const [username, setUsername] = useState('dealer@gmail.com');
+  const [username, setUsername] = useState('asif.attar@caryanam.in');
   const [password, setPassword] = useState('Pass@123');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
- 
+
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const {connectWebSocket} = useWebSocket();
- 
+
   const storeAuthData = async (
     token: string,
     userId: string,
@@ -61,14 +61,14 @@ const Login = () => {
       await AsyncStorage.setItem(TOKEN_KEY, token);
       await AsyncStorage.setItem(USER_ID_KEY, userId);
       await AsyncStorage.setItem(USER_EMAIL_KEY, email);
- 
+
       if (dealerId) {
         await AsyncStorage.setItem(DEALER_ID_KEY, dealerId);
         console.log('✅ Dealer ID stored:', dealerId);
       } else {
         console.warn('⚠️ No dealer ID found in login response');
       }
- 
+
       await AsyncStorage.setItem(
         USER_DATA_KEY,
         JSON.stringify({
@@ -79,13 +79,13 @@ const Login = () => {
           ...fullUserData,
         }),
       );
- 
+
       console.log('✅ Auth data stored successfully');
     } catch (error) {
       console.error('❌ Error storing auth data:', error);
     }
   };
- 
+
   const parseJwt = (token: string) => {
     try {
       const base64Url = token.split('.')[1];
@@ -104,17 +104,17 @@ const Login = () => {
       return null;
     }
   };
- 
+
   const handleLogin = async () => {
     if (!username || !password) {
       Alert.alert('Validation Error', 'Username and Password are required');
       return;
     }
- 
+
     try {
       setLoading(true);
       const response = await fetch(
-        'http://10.0.2.2:8086/jwt/login',
+        'https://car01.dostenterprises.com/jwt/login',
         {
           method: 'POST',
           headers: {
@@ -127,22 +127,26 @@ const Login = () => {
           }),
         },
       );
- 
+
       const responseText = await response.text();
       console.log('=== LOGIN RESPONSE ===');
       console.log('Response text:', responseText);
- 
+
       let token: string | null = null;
       try {
         const data = JSON.parse(responseText);
         if (data.token) token = data.token;
         else if (typeof data === 'string' && data.length > 100) token = data;
       } catch {
-        if (responseText && responseText.length > 100 && responseText.includes('.')) {
+        if (
+          responseText &&
+          responseText.length > 100 &&
+          responseText.includes('.')
+        ) {
           token = responseText;
         }
       }
- 
+
       if (response.ok && token) {
         const decodedToken = parseJwt(token);
         const userId =
@@ -151,7 +155,7 @@ const Login = () => {
           decodedToken?.id ||
           username;
         const userEmail = decodedToken?.email || username;
- 
+
         const dealerId =
           decodedToken?.dealerId ||
           decodedToken?.dealer_id ||
@@ -159,21 +163,24 @@ const Login = () => {
           decodedToken?.DealerId ||
           decodedToken?.dealer ||
           null;
- 
+
         console.log('User ID:', userId);
         console.log('Dealer ID:', dealerId);
- 
+
         // Always store auth data and connect WebSocket (no token in WS)
         await storeAuthData(token, userId, userEmail, dealerId, decodedToken);
         connectWebSocket();
- 
+
         // 🔒 Check dealer access
         if (!dealerId) {
-          Alert.alert('Access Denied', 'You are not a dealer. Only dealers can log in.');
+          Alert.alert(
+            'Access Denied',
+            'You are not a dealer. Only dealers can log in.',
+          );
           setLoading(false);
           return;
         }
- 
+
         // ✅ Dealer can continue to Home
         Alert.alert('Success', 'Login Successful! Connecting to live bids...');
         setTimeout(() => {
@@ -204,13 +211,13 @@ const Login = () => {
       setLoading(false);
     }
   };
- 
+
   return (
     <LinearGradient
       colors={['#051A2F', '#051A2F', '#051A2F']}
       style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#051A2F" />
- 
+
       {/* Top Curved Section with Centered Logo */}
       <View style={styles.topCurvedSection}>
         <Image
@@ -219,7 +226,7 @@ const Login = () => {
           resizeMode="contain"
         />
       </View>
- 
+
       {/* White Full Curved Card Section */}
       <View style={styles.cardContainer}>
         <View style={styles.content}>
@@ -236,7 +243,7 @@ const Login = () => {
               keyboardType="email-address"
             />
           </View>
- 
+
           <View style={styles.formGroup}>
             <Text style={styles.label}>Password</Text>
             <View style={styles.passwordContainer}>
@@ -261,13 +268,13 @@ const Login = () => {
               />
             </View>
           </View>
- 
+
           <TouchableOpacity
             style={styles.forgotContainer}
             onPress={() => navigation.navigate('ForgotPassword')}>
             <Text style={styles.forgotText}>Forgot Password?</Text>
           </TouchableOpacity>
- 
+
           <TouchableOpacity
             style={[styles.loginButton, loading && styles.loginButtonDisabled]}
             onPress={handleLogin}
@@ -283,7 +290,7 @@ const Login = () => {
     </LinearGradient>
   );
 };
- 
+
 const styles = StyleSheet.create({
   container: {flex: 1},
   topCurvedSection: {
@@ -351,6 +358,5 @@ const styles = StyleSheet.create({
     letterSpacing: 1,
   },
 });
- 
+
 export default Login;
- 

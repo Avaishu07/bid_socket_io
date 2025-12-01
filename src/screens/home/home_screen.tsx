@@ -789,7 +789,7 @@
 //       carImageData[bidId] ||
 //       selectedCarForDetails.imageUrl ||
 //       'https://photos.caryanamindia.com/1453c850-c6a4-4d46-ab36-6c4dbab27f4c-crysta%201%20-%20Copy.jpg';
-   
+
 //     const carDetails = carDetailsData[carId] || carDetailsData[bidId];
 //     const livePriceData = livePrices[carId];
 //     const currentBid = livePriceData?.price ?? selectedCarForDetails.currentBid ?? carDetails?.price ?? 5874000;
@@ -815,7 +815,7 @@
 //         onRequestClose={() => setCarDetailsModalVisible(false)}>
 //         <SafeAreaView style={styles.detailsModalContainer}>
 //           <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-         
+
 //           <View style={styles.detailsHeader}>
 //             <TouchableOpacity
 //               onPress={() => setCarDetailsModalVisible(false)}
@@ -1188,21 +1188,6 @@
 
 // export default HomeScreen;
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   View,
@@ -1294,10 +1279,16 @@ const HomeScreen: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [storedToken, setStoredToken] = useState<string | null>(null);
   const [storedUserId, setStoredUserId] = useState<string | null>(null);
-  const [biddingStates, setBiddingStates] = useState<{[key: string]: boolean}>({});
-  const [livePrices, setLivePrices] = useState<{[key: string]: LivePriceData}>({});
+  const [biddingStates, setBiddingStates] = useState<{[key: string]: boolean}>(
+    {},
+  );
+  const [livePrices, setLivePrices] = useState<{[key: string]: LivePriceData}>(
+    {},
+  );
   const [carImageData, setCarImageData] = useState<{[key: string]: string}>({});
-  const [carDetailsData, setCarDetailsData] = useState<{[key: string]: any}>({});
+  const [carDetailsData, setCarDetailsData] = useState<{[key: string]: any}>(
+    {},
+  );
   const [carAuctionTimes, setCarAuctionTimes] = useState<{
     [key: string]: {start: number; end: number};
   }>({});
@@ -1307,16 +1298,21 @@ const HomeScreen: React.FC = () => {
   const [filteredLiveCars, setFilteredLiveCars] = useState<Car[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [carDetailsModalVisible, setCarDetailsModalVisible] = useState(false);
-  const [selectedCarForDetails, setSelectedCarForDetails] = useState<Car | null>(null);
+  const [selectedCarForDetails, setSelectedCarForDetails] =
+    useState<Car | null>(null);
   const [selectedCar, setSelectedCar] = useState<{
     bidCarId: string;
     price: number;
   } | null>(null);
-  const [bidAmounts, setBidAmounts] = useState<{[bidCarId: string]: string}>({});
+  const [bidAmounts, setBidAmounts] = useState<{[bidCarId: string]: string}>(
+    {},
+  );
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [showLowBalanceWarning, setShowLowBalanceWarning] = useState(true);
 
-  const [bidModalPriceCache, setBidModalPriceCache] = useState<{[bidCarId: string]: number}>({});
+  const [bidModalPriceCache, setBidModalPriceCache] = useState<{
+    [bidCarId: string]: number;
+  }>({});
 
   const bidInitializedRef = useRef<string | null>(null);
   const countdownInterval = useRef<NodeJS.Timeout | null>(null);
@@ -1339,57 +1335,74 @@ const HomeScreen: React.FC = () => {
   } = useWebSocket();
 
   // === NOTIFICATION SYSTEM ===
-  const showNotification = useCallback((car: Car, type: 'bid' | 'outbid' | 'won' | 'time') => {
-    const carName = `${car.make || 'Toyota'} ${car.model || 'Innova'} ${car.variant || '2.8 ZX'}`;
-    let message = '';
-    switch (type) {
-      case 'bid':
-        message = `You placed a bid on ${carName} at ₹${(livePrices[car.id]?.price || 0).toLocaleString()}`;
-        break;
-      case 'outbid':
-        message = `You've been outbid on ${carName}! New bid: ₹${((livePrices[car.id]?.price || 0) + 5000).toLocaleString()}`;
-        break;
-      case 'won':
-        message = `Congratulations! You won ${carName} for ₹${(livePrices[car.id]?.price || 0).toLocaleString()}`;
-        break;
-      case 'time':
-        message = `Only 5 minutes left for ${carName}!`;
-        break;
-    }
-    const newNotif: Notification = {
-      id: `${car.id}-${Date.now()}`,
-      carId: car.id,
-      message,
-      type,
-      timestamp: Date.now(),
-    };
-    setNotifications(prev => [newNotif, ...prev.slice(0, 4)]);
-    notificationAnim.setValue(-100);
-    Animated.timing(notificationAnim, {
-      toValue: 0,
-      duration: 300,
-      easing: Easing.out(Easing.quad),
-      useNativeDriver: true,
-    }).start();
-    setTimeout(() => {
+  const showNotification = useCallback(
+    (car: Car, type: 'bid' | 'outbid' | 'won' | 'time') => {
+      const carName = `${car.make || 'Toyota'} ${car.model || 'Innova'} ${
+        car.variant || '2.8 ZX'
+      }`;
+      let message = '';
+      switch (type) {
+        case 'bid':
+          message = `You placed a bid on ${carName} at ₹${(
+            livePrices[car.id]?.price || 0
+          ).toLocaleString()}`;
+          break;
+        case 'outbid':
+          message = `You've been outbid on ${carName}! New bid: ₹${(
+            (livePrices[car.id]?.price || 0) + 5000
+          ).toLocaleString()}`;
+          break;
+        case 'won':
+          message = `Congratulations! You won ${carName} for ₹${(
+            livePrices[car.id]?.price || 0
+          ).toLocaleString()}`;
+          break;
+        case 'time':
+          message = `Only 5 minutes left for ${carName}!`;
+          break;
+      }
+      const newNotif: Notification = {
+        id: `${car.id}-${Date.now()}`,
+        carId: car.id,
+        message,
+        type,
+        timestamp: Date.now(),
+      };
+      setNotifications(prev => [newNotif, ...prev.slice(0, 4)]);
+      notificationAnim.setValue(-100);
       Animated.timing(notificationAnim, {
-        toValue: -100,
+        toValue: 0,
         duration: 300,
+        easing: Easing.out(Easing.quad),
         useNativeDriver: true,
-      }).start(() => {
-        setNotifications(prev => prev.filter(n => n.id !== newNotif.id));
-      });
-    }, 4000);
-  // }, [livePrices, notificationAnim]);
-  }, [livePrices, notificationAnim]);
+      }).start();
+      setTimeout(() => {
+        Animated.timing(notificationAnim, {
+          toValue: -100,
+          duration: 300,
+          useNativeDriver: true,
+        }).start(() => {
+          setNotifications(prev => prev.filter(n => n.id !== newNotif.id));
+        });
+      }, 4000);
+      // }, [livePrices, notificationAnim]);
+    },
+    [livePrices, notificationAnim],
+  );
 
   const handleNotificationClick = () => {
     if (filteredLiveCars.length === 0) {
       Alert.alert('No Cars', 'No live cars to show demo notifications.');
       return;
     }
-    const randomCar = filteredLiveCars[Math.floor(Math.random() * filteredLiveCars.length)];
-    const types: Array<'bid' | 'outbid' | 'won' | 'time'> = ['bid', 'outbid', 'time', 'won'];
+    const randomCar =
+      filteredLiveCars[Math.floor(Math.random() * filteredLiveCars.length)];
+    const types: Array<'bid' | 'outbid' | 'won' | 'time'> = [
+      'bid',
+      'outbid',
+      'time',
+      'won',
+    ];
     const randomType = types[Math.floor(Math.random() * types.length)];
     showNotification(randomCar, randomType);
   };
@@ -1542,7 +1555,6 @@ const HomeScreen: React.FC = () => {
   const userInfo = routeParams?.userInfo;
 
   useEffect(() => {
-
     if (connectionStatus === 'disconnected') {
       connectWebSocket();
     }
@@ -1558,7 +1570,7 @@ const HomeScreen: React.FC = () => {
     } else if (connectionStatus === 'connecting') {
       setIsLoading(true);
     }
-  // }, [connectionStatus]);
+    // }, [connectionStatus]);
   }, []);
 
   // === PRICE POLLING (DISABLED BY DEFAULT TO AVOID BACKEND LOOPS) ===
@@ -1596,7 +1608,7 @@ const HomeScreen: React.FC = () => {
     bidCarId: string,
   ): Promise<LivePriceData | null> => {
     try {
-      const livePriceUrl = `http://10.0.2.2:8086/Bid/getliveValue?bidCarId=${bidCarId}`;
+      const livePriceUrl = `https://car01.dostenterprises.com/Bid/getliveValue?bidCarId=${bidCarId}`;
       const response = await fetch(livePriceUrl);
       const data = await response.json();
       const price = data?.object?.price ?? 0;
@@ -1636,7 +1648,7 @@ const HomeScreen: React.FC = () => {
     fetchingRef.current.add(key);
 
     try {
-      const imageUrl = `http://10.0.2.2:8086/uploadFileBidCar/getByBidCarID?beadingCarId=${beadingCarId}`;
+      const imageUrl = `https://car01.dostenterprises.com/uploadFileBidCar/getByBidCarID?beadingCarId=${beadingCarId}`;
       const imageResponse = await fetch(imageUrl);
       const imageText = await imageResponse.text();
       let imageDataArray: any[] = [];
@@ -1657,7 +1669,7 @@ const HomeScreen: React.FC = () => {
             item.subtype?.toLowerCase() === 'coverimage') &&
           String(item.beadingCarId) === String(beadingCarId),
       );
-      const carIdUrl = `http://10.0.2.2:8086/BeadingCarController/getByBidCarId/${bidCarId}`;
+      const carIdUrl = `https://car01.dostenterprises.com/BeadingCarController/getByBidCarId/${bidCarId}`;
       const carIdResponse = await fetch(carIdUrl);
       const carIdText = await carIdResponse.text();
       let carIdData: any = null;
@@ -1686,32 +1698,35 @@ const HomeScreen: React.FC = () => {
 
   // EFFECT: fetch images/details only when filteredLiveCars changes (prevents loop)
 
-// const triggerFetchCarData =()=>{
-// console.log('triggerFetchCarData called1');
-//     filteredLiveCars.forEach(car => {
-//       const beadingId = car.beadingCarId || car.id;
-//       const bidId = car.bidCarId || car.id;
-// console.log(`2.Checking car - Beading ID: ${beadingId}, Bid ID: ${bidId}`);
-//       if (!carDetailsData[bidId] || !carImageData[beadingId]) {
-//         console.log(`3.Fetching data for car - Beading ID: ${beadingId}, Bid ID: ${bidId}`);
-//         fetchCarImageAndDetails(beadingId, bidId);
-//       }
-//     });
-// }
-const triggerFetchCarData = () => {
-  console.log('triggerFetchCarData called1');
-  console.log('filteredLiveCars:', filteredLiveCars);  // Check content here
-  filteredLiveCars.forEach(car => {
-    const beadingId = car.beadingCarId || car.id;
-    const bidId = car.bidCarId || car.id;
-    console.log(`2.Checking car - Beading ID: ${beadingId}, Bid ID: ${bidId}`);
-    if (!carDetailsData[bidId] || !carImageData[beadingId]) {
-      console.log(`3.Fetching data for car - Beading ID: ${beadingId}, Bid ID: ${bidId}`);
-      fetchCarImageAndDetails(beadingId, bidId);
-    }
-  });
-}
-
+  // const triggerFetchCarData =()=>{
+  // console.log('triggerFetchCarData called1');
+  //     filteredLiveCars.forEach(car => {
+  //       const beadingId = car.beadingCarId || car.id;
+  //       const bidId = car.bidCarId || car.id;
+  // console.log(`2.Checking car - Beading ID: ${beadingId}, Bid ID: ${bidId}`);
+  //       if (!carDetailsData[bidId] || !carImageData[beadingId]) {
+  //         console.log(`3.Fetching data for car - Beading ID: ${beadingId}, Bid ID: ${bidId}`);
+  //         fetchCarImageAndDetails(beadingId, bidId);
+  //       }
+  //     });
+  // }
+  const triggerFetchCarData = () => {
+    console.log('triggerFetchCarData called1');
+    console.log('filteredLiveCars:', filteredLiveCars); // Check content here
+    filteredLiveCars.forEach(car => {
+      const beadingId = car.beadingCarId || car.id;
+      const bidId = car.bidCarId || car.id;
+      console.log(
+        `2.Checking car - Beading ID: ${beadingId}, Bid ID: ${bidId}`,
+      );
+      if (!carDetailsData[bidId] || !carImageData[beadingId]) {
+        console.log(
+          `3.Fetching data for car - Beading ID: ${beadingId}, Bid ID: ${bidId}`,
+        );
+        fetchCarImageAndDetails(beadingId, bidId);
+      }
+    });
+  };
 
   // useEffect(() => {
 
@@ -1728,26 +1743,26 @@ const triggerFetchCarData = () => {
   // }, [carDetailsData, carImageData]);
 
   // Add this ref at top of component
-// const prevFilteredLiveCarsLengthRef = useRef(0);
+  // const prevFilteredLiveCarsLengthRef = useRef(0);
 
-useEffect(() => {
-  // Check if length is different from previous
-  if (filteredLiveCars.length === prevFilteredLiveCarsLengthRef.current) {
-    return;
-  }
-  
-  filteredLiveCars.forEach(car => {
-    const beadingId = car.beadingCarId || car.id;
-    const bidId = car.bidCarId || car.id;
-
-    if (!carDetailsData[bidId] || !carImageData[beadingId]) {
-      fetchCarImageAndDetails(beadingId, bidId);
+  useEffect(() => {
+    // Check if length is different from previous
+    if (filteredLiveCars.length === prevFilteredLiveCarsLengthRef.current) {
+      return;
     }
-  });
-  
-  // Update previous length
-  prevFilteredLiveCarsLengthRef.current = filteredLiveCars.length;
-}, [filteredLiveCars]);
+
+    filteredLiveCars.forEach(car => {
+      const beadingId = car.beadingCarId || car.id;
+      const bidId = car.bidCarId || car.id;
+
+      if (!carDetailsData[bidId] || !carImageData[beadingId]) {
+        fetchCarImageAndDetails(beadingId, bidId);
+      }
+    });
+
+    // Update previous length
+    prevFilteredLiveCarsLengthRef.current = filteredLiveCars.length;
+  }, [filteredLiveCars]);
 
   // === MODAL HANDLERS ===
   const openCarDetailsModal = async (car: Car) => {
@@ -1760,10 +1775,10 @@ useEffect(() => {
       const priceData = await fetchLivePrice(bidCarId);
       const currentPrice = priceData?.price ?? 0;
 
-      setBidModalPriceCache(prev => ({ ...prev, [bidCarId]: currentPrice }));
-      setSelectedCar({ bidCarId, price: currentPrice });
+      setBidModalPriceCache(prev => ({...prev, [bidCarId]: currentPrice}));
+      setSelectedCar({bidCarId, price: currentPrice});
       const initialBid = (currentPrice + 2000).toString();
-      setBidAmounts(prev => ({ ...prev, [bidCarId]: initialBid }));
+      setBidAmounts(prev => ({...prev, [bidCarId]: initialBid}));
       setModalVisible(true);
     } catch (error) {
       Alert.alert('Error', 'Could not load current price. Try again.');
@@ -1787,7 +1802,7 @@ useEffect(() => {
       bidInitializedRef.current = null;
       if (selectedCar) {
         setBidModalPriceCache(prev => {
-          const updated = { ...prev };
+          const updated = {...prev};
           delete updated[selectedCar.bidCarId];
           return updated;
         });
@@ -1803,8 +1818,10 @@ useEffect(() => {
 
   const handleDecreaseBid = () => {
     if (selectedCar) {
-      const cachedPrice = bidModalPriceCache[selectedCar.bidCarId] ?? selectedCar.price ?? 0;
-      const current = parseInt(bidAmounts[selectedCar.bidCarId] || '0') || cachedPrice + 2000;
+      const cachedPrice =
+        bidModalPriceCache[selectedCar.bidCarId] ?? selectedCar.price ?? 0;
+      const current =
+        parseInt(bidAmounts[selectedCar.bidCarId] || '0') || cachedPrice + 2000;
       if (current - 2000 > cachedPrice) {
         setBidAmounts(prev => ({
           ...prev,
@@ -1816,7 +1833,9 @@ useEffect(() => {
 
   const handleIncreaseBid = () => {
     if (selectedCar) {
-      const current = parseInt(bidAmounts[selectedCar.bidCarId] || '0') || (selectedCar.price + 2000);
+      const current =
+        parseInt(bidAmounts[selectedCar.bidCarId] || '0') ||
+        selectedCar.price + 2000;
       setBidAmounts(prev => ({
         ...prev,
         [selectedCar.bidCarId]: (current + 2000).toString(),
@@ -1852,7 +1871,7 @@ useEffect(() => {
         amount: bidValue,
       };
 
-      const bidUrl = `http://10.0.2.2:8086/Bid/placeBid?bidCarId=${selectedCar.bidCarId}`;
+      const bidUrl = `https://car01.dostenterprises.com/Bid/placeBid?bidCarId=${selectedCar.bidCarId}`;
       const response = await fetch(bidUrl, {
         method: 'POST',
         headers: {
@@ -1880,7 +1899,9 @@ useEffect(() => {
               onPress: async () => {
                 await refreshAllCarPrices();
                 getLiveCars();
-                const car = filteredLiveCars.find(c => c.id === selectedCar.bidCarId);
+                const car = filteredLiveCars.find(
+                  c => c.id === selectedCar.bidCarId,
+                );
                 if (car) showNotification(car, 'bid');
               },
             },
@@ -1939,14 +1960,14 @@ useEffect(() => {
         <Image source={{uri: imageUrl}} style={styles.carImage} />
         <TouchableOpacity
           style={styles.heartIcon}
-          onPress={(e) => {
+          onPress={e => {
             e.stopPropagation();
             toggleWishlist(carId);
           }}>
           <Ionicons
-            name={wishlisted ? "heart" : "heart-outline"}
+            name={wishlisted ? 'heart' : 'heart-outline'}
             size={24}
-            color={wishlisted ? "#e74c3c" : "#fff"}
+            color={wishlisted ? '#e74c3c' : '#fff'}
           />
         </TouchableOpacity>
         {car.isScrap && (
@@ -1994,14 +2015,19 @@ useEffect(() => {
           </View>
 
           <TouchableOpacity
-            onPress={(e) => {
+            onPress={e => {
               e.stopPropagation();
               openCarDetailsModal(car);
             }}
             activeOpacity={0.8}>
             <View style={styles.viewButton}>
               <Text style={styles.viewButtonText}>VIEW</Text>
-              <Ionicons name="eye" size={16} color="#fff" style={{marginLeft: 6}} />
+              <Ionicons
+                name="eye"
+                size={16}
+                color="#fff"
+                style={{marginLeft: 6}}
+              />
             </View>
           </TouchableOpacity>
         </View>
@@ -2041,20 +2067,33 @@ useEffect(() => {
       carImageData[bidId] ||
       selectedCarForDetails.imageUrl ||
       'https://photos.caryanamindia.com/1453c850-c6a4-4d46-ab36-6c4dbab27f4c-crysta%201%20-%20Copy.jpg';
-   
+
     const carDetails = carDetailsData[carId] || carDetailsData[bidId];
     const livePriceData = livePrices[carId];
-    const currentBid = livePriceData?.price ?? selectedCarForDetails.currentBid ?? carDetails?.price ?? 5874000;
+    const currentBid =
+      livePriceData?.price ??
+      selectedCarForDetails.currentBid ??
+      carDetails?.price ??
+      5874000;
     const timeLeft = countdownTimers[carId] || '23:24:00';
 
     const brand = carDetails?.brand || selectedCarForDetails.make || '2021';
-    const model = carDetails?.model || selectedCarForDetails.model || 'FORCE ONE';
-    const variant = carDetails?.variant || selectedCarForDetails.variant || 'BLUE & AUTOMATIC';
-    const kmDriven = carDetails?.kmDriven || selectedCarForDetails.kmsDriven || 50000;
-    const ownerSerial = carDetails?.ownerSerial || selectedCarForDetails.owner || '2ND OWNER';
-    const fuelType = carDetails?.fuelType || selectedCarForDetails.fuelType || 'DIESEL';
-    const registration = carDetails?.registration || selectedCarForDetails.rtoCode || 'MH-12';
-    const city = carDetails?.city || selectedCarForDetails.city || 'Kharadi, Kharadi';
+    const model =
+      carDetails?.model || selectedCarForDetails.model || 'FORCE ONE';
+    const variant =
+      carDetails?.variant ||
+      selectedCarForDetails.variant ||
+      'BLUE & AUTOMATIC';
+    const kmDriven =
+      carDetails?.kmDriven || selectedCarForDetails.kmsDriven || 50000;
+    const ownerSerial =
+      carDetails?.ownerSerial || selectedCarForDetails.owner || '2ND OWNER';
+    const fuelType =
+      carDetails?.fuelType || selectedCarForDetails.fuelType || 'DIESEL';
+    const registration =
+      carDetails?.registration || selectedCarForDetails.rtoCode || 'MH-12';
+    const city =
+      carDetails?.city || selectedCarForDetails.city || 'Kharadi, Kharadi';
     const transmission = carDetails?.transmission || 'Automatic';
     const makeYear = carDetails?.makeYear || carDetails?.year || '2021';
     const insuranceType = carDetails?.insuranceType || 'Third Party';
@@ -2067,7 +2106,7 @@ useEffect(() => {
         onRequestClose={() => setCarDetailsModalVisible(false)}>
         <SafeAreaView style={styles.detailsModalContainer}>
           <StatusBar barStyle="dark-content" backgroundColor="#fff" />
-         
+
           <View style={styles.detailsHeader}>
             <TouchableOpacity
               onPress={() => setCarDetailsModalVisible(false)}
@@ -2079,14 +2118,16 @@ useEffect(() => {
               onPress={() => toggleWishlist(carId)}
               style={styles.headerHeartIcon}>
               <Ionicons
-                name={isWishlisted(carId) ? "heart" : "heart-outline"}
+                name={isWishlisted(carId) ? 'heart' : 'heart-outline'}
                 size={24}
-                color={isWishlisted(carId) ? "#e74c3c" : "#262a4f"}
+                color={isWishlisted(carId) ? '#e74c3c' : '#262a4f'}
               />
             </TouchableOpacity>
           </View>
 
-          <ScrollView style={styles.detailsScrollView} showsVerticalScrollIndicator={false}>
+          <ScrollView
+            style={styles.detailsScrollView}
+            showsVerticalScrollIndicator={false}>
             <View style={styles.detailsImageContainer}>
               <Image source={{uri: imageUrl}} style={styles.detailsCarImage} />
               {selectedCarForDetails.isScrap && (
@@ -2096,23 +2137,41 @@ useEffect(() => {
               )}
             </View>
             <View style={styles.detailsTitleSection}>
-              <Text style={styles.detailsCarTitle}>{makeYear} {model.toUpperCase()}</Text>
+              <Text style={styles.detailsCarTitle}>
+                {makeYear} {model.toUpperCase()}
+              </Text>
               <Text style={styles.detailsCarSubtitle}>{variant}</Text>
               <View style={styles.quickInfoBadges}>
-                <View style={styles.infoBadge}><Text style={styles.infoBadgeText}>{kmDriven.toLocaleString()} KM</Text></View>
-                <View style={styles.infoBadge}><Text style={styles.infoBadgeText}>{ownerSerial}</Text></View>
-                <View style={styles.infoBadge}><Text style={styles.infoBadgeText}>{fuelType}</Text></View>
-                <View style={styles.infoBadge}><Text style={styles.infoBadgeText}>{registration}</Text></View>
+                <View style={styles.infoBadge}>
+                  <Text style={styles.infoBadgeText}>
+                    {kmDriven.toLocaleString()} KM
+                  </Text>
+                </View>
+                <View style={styles.infoBadge}>
+                  <Text style={styles.infoBadgeText}>{ownerSerial}</Text>
+                </View>
+                <View style={styles.infoBadge}>
+                  <Text style={styles.infoBadgeText}>{fuelType}</Text>
+                </View>
+                <View style={styles.infoBadge}>
+                  <Text style={styles.infoBadgeText}>{registration}</Text>
+                </View>
               </View>
               <View style={styles.locationTestDriveRow}>
                 <View style={styles.locationInfoBox}>
-                  <MaterialCommunityIcons name="map-marker" size={18} color="#10B981" />
+                  <MaterialCommunityIcons
+                    name="map-marker"
+                    size={18}
+                    color="#10B981"
+                  />
                   <Text style={styles.locationInfoText}>Parked at: {city}</Text>
                 </View>
               </View>
               <View style={styles.testDriveAvailable}>
                 <Ionicons name="home" size={18} color="#10B981" />
-                <Text style={styles.testDriveText}>Home Test Drive Available</Text>
+                <Text style={styles.testDriveText}>
+                  Home Test Drive Available
+                </Text>
               </View>
 
               {/* ✅ UPDATED BUTTON */}
@@ -2124,14 +2183,22 @@ useEffect(() => {
                     beadingCarId: selectedCarForDetails.beadingCarId,
                   });
                 }}>
-                <MaterialCommunityIcons name="file-document-outline" size={20} color="#a9acd6" />
-                <Text style={styles.inspectionReportText}>View Inspection Report</Text>
+                <MaterialCommunityIcons
+                  name="file-document-outline"
+                  size={20}
+                  color="#a9acd6"
+                />
+                <Text style={styles.inspectionReportText}>
+                  View Inspection Report
+                </Text>
               </TouchableOpacity>
             </View>
 
             <View style={styles.priceTimerSection}>
               <View style={styles.priceBox}>
-                <Text style={styles.priceLabel}>Amount: ₹{currentBid.toLocaleString()}</Text>
+                <Text style={styles.priceLabel}>
+                  Amount: ₹{currentBid.toLocaleString()}
+                </Text>
                 <Text style={styles.priceSubLabel}>FIXED ROAD PRICE</Text>
                 <Text style={styles.timerLabelBig}>{timeLeft}</Text>
               </View>
@@ -2140,37 +2207,83 @@ useEffect(() => {
               <Text style={styles.sectionTitle}>Know your Car</Text>
               <View style={styles.detailsGrid}>
                 <View style={styles.detailItem}>
-                  <View style={styles.detailIconCircle}><MaterialCommunityIcons name="card-account-details" size={24} color="#10B981" /></View>
+                  <View style={styles.detailIconCircle}>
+                    <MaterialCommunityIcons
+                      name="card-account-details"
+                      size={24}
+                      color="#10B981"
+                    />
+                  </View>
                   <Text style={styles.detailLabel}>Reg Number</Text>
                   <Text style={styles.detailValue}>{registration}</Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <View style={styles.detailIconCircle}><MaterialCommunityIcons name="calendar" size={24} color="#10B981" /></View>
+                  <View style={styles.detailIconCircle}>
+                    <MaterialCommunityIcons
+                      name="calendar"
+                      size={24}
+                      color="#10B981"
+                    />
+                  </View>
                   <Text style={styles.detailLabel}>Make Year</Text>
                   <Text style={styles.detailValue}>{makeYear}</Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <View style={styles.detailIconCircle}><MaterialCommunityIcons name="gas-station" size={24} color="#10B981" /></View>
+                  <View style={styles.detailIconCircle}>
+                    <MaterialCommunityIcons
+                      name="gas-station"
+                      size={24}
+                      color="#10B981"
+                    />
+                  </View>
                   <Text style={styles.detailLabel}>Fuel Type</Text>
                   <Text style={styles.detailValue}>{fuelType}</Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <View style={styles.detailIconCircle}><MaterialCommunityIcons name="cog" size={24} color="#10B981" /></View>
+                  <View style={styles.detailIconCircle}>
+                    <MaterialCommunityIcons
+                      name="cog"
+                      size={24}
+                      color="#10B981"
+                    />
+                  </View>
                   <Text style={styles.detailLabel}>Transmission</Text>
                   <Text style={styles.detailValue}>{transmission}</Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <View style={styles.detailIconCircle}><MaterialCommunityIcons name="car" size={24} color="#10B981" /></View>
+                  <View style={styles.detailIconCircle}>
+                    <MaterialCommunityIcons
+                      name="car"
+                      size={24}
+                      color="#10B981"
+                    />
+                  </View>
                   <Text style={styles.detailLabel}>KM Driven</Text>
-                  <Text style={styles.detailValue}>{kmDriven.toLocaleString()}</Text>
+                  <Text style={styles.detailValue}>
+                    {kmDriven.toLocaleString()}
+                  </Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <View style={styles.detailIconCircle}><MaterialCommunityIcons name="account" size={24} color="#10B981" /></View>
+                  <View style={styles.detailIconCircle}>
+                    <MaterialCommunityIcons
+                      name="account"
+                      size={24}
+                      color="#10B981"
+                    />
+                  </View>
                   <Text style={styles.detailLabel}>Ownership</Text>
-                  <Text style={styles.detailValue}>{ownerSerial === '2ND OWNER' ? '2' : ownerSerial}</Text>
+                  <Text style={styles.detailValue}>
+                    {ownerSerial === '2ND OWNER' ? '2' : ownerSerial}
+                  </Text>
                 </View>
                 <View style={styles.detailItem}>
-                  <View style={styles.detailIconCircle}><MaterialCommunityIcons name="shield-check" size={24} color="#10B981" /></View>
+                  <View style={styles.detailIconCircle}>
+                    <MaterialCommunityIcons
+                      name="shield-check"
+                      size={24}
+                      color="#10B981"
+                    />
+                  </View>
                   <Text style={styles.detailLabel}>Insurance Type</Text>
                   <Text style={styles.detailValue}>{insuranceType}</Text>
                 </View>
@@ -2179,13 +2292,64 @@ useEffect(() => {
             <View style={styles.topFeaturesSection}>
               <Text style={styles.sectionTitle}>Top Features</Text>
               <View style={styles.featuresGrid}>
-                <View style={styles.featureItem}><MaterialCommunityIcons name="bluetooth" size={28} color="#262a4f" /><Text style={styles.featureText}>Bluetooth Compatibility</Text></View>
-                <View style={styles.featureItem}><MaterialCommunityIcons name="air-conditioner" size={28} color="#262a4f" /><Text style={styles.featureText}>Air Conditioning</Text></View>
-                <View style={styles.featureItem}><MaterialCommunityIcons name="window-closed" size={28} color="#262a4f" /><Text style={styles.featureText}>Power Windows</Text></View>
-                <View style={styles.featureItem}><MaterialCommunityIcons name="camera-rear" size={28} color="#262a4f" /><Text style={styles.featureText}>Rear Parking Camera</Text></View>
-                <View style={styles.featureItem}><MaterialCommunityIcons name="car-brake-abs" size={28} color="#262a4f" /><Text style={styles.featureText}>ABS</Text></View>
-                <View style={styles.featureItem}><MaterialCommunityIcons name="airbag" size={28} color="#262a4f" /><Text style={styles.featureText}>Air Bag</Text></View>
-                <View style={styles.featureItem}><MaterialCommunityIcons name="power" size={28} color="#262a4f" /><Text style={styles.featureText}>Button Start</Text></View>
+                <View style={styles.featureItem}>
+                  <MaterialCommunityIcons
+                    name="bluetooth"
+                    size={28}
+                    color="#262a4f"
+                  />
+                  <Text style={styles.featureText}>
+                    Bluetooth Compatibility
+                  </Text>
+                </View>
+                <View style={styles.featureItem}>
+                  <MaterialCommunityIcons
+                    name="air-conditioner"
+                    size={28}
+                    color="#262a4f"
+                  />
+                  <Text style={styles.featureText}>Air Conditioning</Text>
+                </View>
+                <View style={styles.featureItem}>
+                  <MaterialCommunityIcons
+                    name="window-closed"
+                    size={28}
+                    color="#262a4f"
+                  />
+                  <Text style={styles.featureText}>Power Windows</Text>
+                </View>
+                <View style={styles.featureItem}>
+                  <MaterialCommunityIcons
+                    name="camera-rear"
+                    size={28}
+                    color="#262a4f"
+                  />
+                  <Text style={styles.featureText}>Rear Parking Camera</Text>
+                </View>
+                <View style={styles.featureItem}>
+                  <MaterialCommunityIcons
+                    name="car-brake-abs"
+                    size={28}
+                    color="#262a4f"
+                  />
+                  <Text style={styles.featureText}>ABS</Text>
+                </View>
+                <View style={styles.featureItem}>
+                  <MaterialCommunityIcons
+                    name="airbag"
+                    size={28}
+                    color="#262a4f"
+                  />
+                  <Text style={styles.featureText}>Air Bag</Text>
+                </View>
+                <View style={styles.featureItem}>
+                  <MaterialCommunityIcons
+                    name="power"
+                    size={28}
+                    color="#262a4f"
+                  />
+                  <Text style={styles.featureText}>Button Start</Text>
+                </View>
               </View>
             </View>
             <View style={{height: 120}} />
@@ -2201,7 +2365,9 @@ useEffect(() => {
               activeOpacity={0.8}>
               <Text style={styles.placeBidButtonText}>PLACE BID</Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.interestedButton} activeOpacity={0.8}>
+            <TouchableOpacity
+              style={styles.interestedButton}
+              activeOpacity={0.8}>
               <Text style={styles.interestedButtonText}>I am Interested</Text>
             </TouchableOpacity>
           </View>
@@ -2224,24 +2390,40 @@ useEffect(() => {
             style={[
               styles.notificationBanner,
               {
-                backgroundColor: notifications[0].type === 'bid' ? '#10B981' :
-                                 notifications[0].type === 'outbid' ? '#EF4444' :
-                                 notifications[0].type === 'won' ? '#8B5CF6' : '#F59E0B',
-                transform: [{ translateY: notificationAnim }],
+                backgroundColor:
+                  notifications[0].type === 'bid'
+                    ? '#10B981'
+                    : notifications[0].type === 'outbid'
+                    ? '#EF4444'
+                    : notifications[0].type === 'won'
+                    ? '#8B5CF6'
+                    : '#F59E0B',
+                transform: [{translateY: notificationAnim}],
               },
             ]}>
             <MaterialCommunityIcons
               name={
-                notifications[0].type === 'bid' ? 'check-circle' :
-                notifications[0].type === 'outbid' ? 'alert' :
-                notifications[0].type === 'won' ? 'trophy' : 'clock-alert'
+                notifications[0].type === 'bid'
+                  ? 'check-circle'
+                  : notifications[0].type === 'outbid'
+                  ? 'alert'
+                  : notifications[0].type === 'won'
+                  ? 'trophy'
+                  : 'clock-alert'
               }
               size={20}
               color="#fff"
-              style={{ marginRight: 8 }}
+              style={{marginRight: 8}}
             />
-            <Text style={styles.notificationText}>{notifications[0].message}</Text>
-            <Ionicons name="chevron-down" size={18} color="#fff" style={{ marginLeft: 8 }} />
+            <Text style={styles.notificationText}>
+              {notifications[0].message}
+            </Text>
+            <Ionicons
+              name="chevron-down"
+              size={18}
+              color="#fff"
+              style={{marginLeft: 8}}
+            />
           </TouchableOpacity>
         )}
         <View style={styles.header}>
@@ -2254,7 +2436,9 @@ useEffect(() => {
                 resizeMode="contain"
               />
             </View>
-            <TouchableOpacity style={styles.notificationIcon} onPress={handleNotificationClick}>
+            <TouchableOpacity
+              style={styles.notificationIcon}
+              onPress={handleNotificationClick}>
               <Ionicons
                 name="notifications-outline"
                 size={26}

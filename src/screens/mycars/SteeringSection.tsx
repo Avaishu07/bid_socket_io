@@ -1,18 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, Image, ScrollView, StyleSheet, ActivityIndicator } from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {
+  View,
+  Text,
+  Image,
+  ScrollView,
+  StyleSheet,
+  ActivityIndicator,
+} from 'react-native';
 
 interface SteeringSectionProps {
   beadingCarId: string;
 }
 
-const SteeringSection: React.FC<SteeringSectionProps> = ({ beadingCarId }) => {
+const SteeringSection: React.FC<SteeringSectionProps> = ({beadingCarId}) => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   const [formData, setFormData] = useState({
-    Steering: "",
-    Brake: "",
-    Suspension: "",
+    Steering: '',
+    Brake: '',
+    Suspension: '',
   });
 
   const [uploadedImages, setUploadedImages] = useState({
@@ -27,7 +34,7 @@ const SteeringSection: React.FC<SteeringSectionProps> = ({ beadingCarId }) => {
     try {
       const docType = 'Steering';
       const response = await fetch(
-        `https://caryanamindia.prodchunca.in.net/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`
+        `https://car01.dostenterprises.com/uploadFileBidCar/getBidCarIdType?beadingCarId=${beadingCarId}&docType=${docType}`,
       );
       const text = await response.text();
       const data = JSON.parse(text);
@@ -37,17 +44,23 @@ const SteeringSection: React.FC<SteeringSectionProps> = ({ beadingCarId }) => {
       if (data?.object && Array.isArray(data.object)) {
         data.object.forEach((item: any) => {
           switch (item.subtype) {
-            case "Steering":
-              setFormData((prev) => ({ ...prev, Steering: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, Steerings: item.documentLink }));
+            case 'Steering':
+              setFormData(prev => ({...prev, Steering: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                Steerings: item.documentLink,
+              }));
               break;
-            case "Brake":
-              setFormData((prev) => ({ ...prev, Brake: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, Brakes: item.documentLink }));
+            case 'Brake':
+              setFormData(prev => ({...prev, Brake: item.comment}));
+              setUploadedImages(prev => ({...prev, Brakes: item.documentLink}));
               break;
-            case "Suspension":
-              setFormData((prev) => ({ ...prev, Suspension: item.comment }));
-              setUploadedImages((prev) => ({ ...prev, Suspensions: item.documentLink }));
+            case 'Suspension':
+              setFormData(prev => ({...prev, Suspension: item.comment}));
+              setUploadedImages(prev => ({
+                ...prev,
+                Suspensions: item.documentLink,
+              }));
               break;
             default:
               break;
@@ -68,15 +81,16 @@ const SteeringSection: React.FC<SteeringSectionProps> = ({ beadingCarId }) => {
     }
   }, [beadingCarId]);
 
-  const renderItem = (label: string, value: string, imageUrl: string | null) => (
+  const renderItem = (
+    label: string,
+    value: string,
+    imageUrl: string | null,
+  ) => (
     <View style={styles.itemContainer}>
-      <Text style={styles.itemText}>{label}: {value || '-'}</Text>
-      {imageUrl && (
-        <Image
-          source={{ uri: imageUrl }}
-          style={styles.image}
-        />
-      )}
+      <Text style={styles.itemText}>
+        {label}: {value || '-'}
+      </Text>
+      {imageUrl && <Image source={{uri: imageUrl}} style={styles.image} />}
     </View>
   );
 
@@ -104,9 +118,17 @@ const SteeringSection: React.FC<SteeringSectionProps> = ({ beadingCarId }) => {
 
         <View style={styles.card}>
           <View style={styles.gridContainer}>
-            {renderItem("Steering", formData.Steering, uploadedImages.Steerings)}
-            {renderItem("Brake", formData.Brake, uploadedImages.Brakes)}
-            {renderItem("Suspension", formData.Suspension, uploadedImages.Suspensions)}
+            {renderItem(
+              'Steering',
+              formData.Steering,
+              uploadedImages.Steerings,
+            )}
+            {renderItem('Brake', formData.Brake, uploadedImages.Brakes)}
+            {renderItem(
+              'Suspension',
+              formData.Suspension,
+              uploadedImages.Suspensions,
+            )}
           </View>
         </View>
       </View>
@@ -151,7 +173,7 @@ const styles = StyleSheet.create({
     borderRadius: 6,
     padding: 16,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: {width: 0, height: 2},
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 3,
